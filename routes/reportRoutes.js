@@ -1,12 +1,15 @@
 import express from "express";
 import { protect, adminOnly } from "../middlewares/authMiddleware.js";
-import { exportTasksReport, exportUsersReport } from "../controllers/reportController.js";
+import { totalProfitReport, jobStatusReport, emptyContainerReport, clientInvoiceReport, ongoingJobsReport } 
+    from "../controllers/reportController.js";
 
 const reportRouter = express.Router();
 
-
-reportRouter.get("/export/tasks", protect, adminOnly, exportTasksReport);
-reportRouter.get("/export/users", protect, adminOnly, exportUsersReport);
+reportRouter.get("/total-profits", protect, adminOnly, totalProfitReport);
+reportRouter.get("/job-statuses", protect, adminOnly, jobStatusReport);
+reportRouter.get("/empty-containers", protect, adminOnly, emptyContainerReport);
+reportRouter.get("/client-invoices", protect, adminOnly, clientInvoiceReport);
+reportRouter.get("/ongoing-jobs", protect, adminOnly, ongoingJobsReport);
 
 
 export default reportRouter;

@@ -1,127 +1,81 @@
-import Task from "../models/task.model.js";
+import totalProfitModel from "../models/total-profit.model.js";
 import User from "../models/user.model.js";
-import excelJs from "exceljs";
 
-export const exportTasksReport = async (req, res) => {
+export const totalProfitReport = async (req, res) => {
+ try {
+    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    let filter = {};
+
+    if (status) {
+      filter.StatusType = status;
+    }
+
+    // Create sort options
+    const sortOptions = {};
+    if (sortBy) {
+      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    } else {
+      // Default sort by creation date, newest first
+      sortOptions.createdAt = -1;
+    }
+
+    // Calculate pagination
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    // Query total count for pagination info
+    const totalCount = await totalProfitModel.countDocuments(filter);
+
+    // Query with filter, sort, and pagination
+    const totalProfits = await totalProfitModel.find(filter)
+      .sort(sortOptions)
+      .skip(skip)
+      .limit(limitNum);
+
+    // Return response with pagination info
+    res.status(200).json({
+      success: true,
+      count: totalProfits.length,
+      total: totalCount,
+      totalPages: Math.ceil(totalCount / limitNum),
+      currentPage: pageNum,
+      data: totalProfits
+    });
+ } catch (error) {
+  console.error("Error fetching total profits:", error);
+  res.status(500).json({ success: false, error: "Internal Server Error" });
+ }
+};
+
+export const jobStatusReport = async (req, res) => {
   try {
-    const tasks = await Task.find().populate("assignedTo", "fullName email");
-
-    const workbook = new excelJs.Workbook();
-    const worksheet = workbook.addWorksheet("Tasks Report");
-
-    worksheet.columns = [
-      { header: "Task Id", key: "_id", width: 25 },
-      { header: "Title", key: "title", width: 30 },
-      { header: "Description", key: "description", width: 50 },
-      { header: "Priority", key: "priority", width: 15 },
-      { header: "Status", key: "status", width: 20 },
-      { header: "Due Date", key: "dueDate", width: 20 },
-      { header: "Assigned To", key: "assignedTo", width: 30 },
-    ];
     
-    tasks.forEach((task) => {
-      const assignedTo = task.assignedTo
-        .map((user) => `${user.fullName} (${user.email})`)
-        .join(", ");
-
-      worksheet.addRow({
-        _id: task._id,
-        title: task.title,
-        description: task.description,
-        priority: task.priority,
-        status: task.status,
-        dueDate: task.dueDate.toISOString().split("T")[0],
-        assignedTo: assignedTo || "Unassigned",
-      });
-    });
-
-    res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
-    res.setHeader(
-      "Content-Disposition",
-      'attachment; filename="tasks_report.xlsx"'
-    );
-    return workbook.xlsx.write(res).then(() => {
-      res.end();
-    });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ message: "Error while exporting Tasks.", error: err.message });
+  } catch (error) {
+    
   }
 };
 
-export const exportUsersReport = async (req, res) => {
-  try {
-    const users = await User.find().select("fullName email _id").lean();
-    const userTasks = await Task.find().populate(
-      "assignedTo",
-      "fullName email _id"
-    );
+export const emptyContainerReport = async (req, res) => {
+    try {
+    
+  } catch (error) {
+    
+  }
+};
 
-    const userTaskMap = {};
-    users.forEach((user) => {
-      userTaskMap[user._id] = {
-        fullName: user.fullName,
-        email: user.email,
-        taskCount: 0,
-        pendingTasks: 0,
-        inProgressTasks: 0,
-        completedTasks: 0,
-      };
-    });
+export const clientInvoiceReport = async (req, res) => {
+   try {
+    
+  } catch (error) {
+    
+  }
+};
 
-    userTasks.forEach((task) => {
-      if (task.assignedTo) {
-        task.assignedTo.forEach((assignedUser) => {
-          if (userTaskMap[assignedUser._id]) {
-            userTaskMap[assignedUser._id].taskCount += 1;
-            if (task.status === "Pending") {
-              userTaskMap[assignedUser._id].pendingTasks += 1;
-            } else if (task.status === "In Progress") {
-              userTaskMap[assignedUser._id].inProgressTasks += 1;
-            } else if (task.status === "Completed") {
-              userTaskMap[assignedUser._id].completedTasks += 1;
-            }
-          }
-        });
-      }
-    });
-
-    const workbook = new excelJs.Workbook();
-    const worksheet = workbook.addWorksheet("User Tasks Report");
-
-    worksheet.columns = [
-        { header: "User Name", key: "fullName", width: 30},
-        { header: "Email", key: "email", width: 40},
-        { header: "Total Assigned tasks", key: "taskCount", width: 20},
-        { header: "Pending Tasks", key: "pendingTasks", width: 20},
-        {
-            header: "In Progress Tasks",
-            key: "inProgressTasks",
-            width: 20
-        },
-        { header: "Completed Tasks", key: "completedTasks", width: 20}
-
-    ]
-    Object.values(userTaskMap).forEach((user) => {
-        worksheet.addRow(user);
-    })
-
-    res.setHeader(
-        "Content-Type",
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-      );
-      res.setHeader(
-        "Content-Disposition",
-        'attachment; filename="users_tasks_report.xlsx"'
-      );
-      return workbook.xlsx.write(res).then(() => {
-        res.end();
-      });
-  } catch (err) {
-    res.status(500).json({ message: "Server Error.", error: err.message });
+export const ongoingJobsReport = async (req, res) => {
+   try {
+    
+  } catch (error) {
+    
   }
 };

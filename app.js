@@ -37,6 +37,7 @@ app.use(express.json());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tasks", taskRouter);
+app.use("/api/v1/admin/reports", reportRouter);
 app.use("/api/v1/reports", reportRouter);
 
 
