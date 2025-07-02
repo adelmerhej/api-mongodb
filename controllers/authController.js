@@ -22,9 +22,6 @@ export const registerUser = async (req, res) => {
   const { fullName, email, password, profileImageUrl, adminInvitetoken } =
     req.body;
 
-  // TODO: to be removed,  for debug purpose
-  console.log(profileImageUrl);
-
   //Validation: check for missing fields
   if (!fullName || !email || !password) {
     return res.status(400).json({ message: "All fields are required." });
@@ -37,7 +34,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already in use." });
     }
 
-    let role = "user";
+    let role = "client";
     //Check if admin invite token is valid
     //If yes, set role to admin
     //If no, set role to user
@@ -57,7 +54,7 @@ export const registerUser = async (req, res) => {
     }
 
     //Hash the password
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     //Create the user
@@ -88,20 +85,38 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
+    //console.log("Login attempt - Email:", email);
+    //console.log("Login attempt - Password:", password);
+    
     const user = await User.findOne({ email });
-
-    console.log('User: ', user);
+    //console.log('User found: ', user ? 'Yes' : 'No');
     
     // 1. Check if user exists
     if (!user) {
-      return res.status(401).json({ message: "Invalid email or password.1" });
+      console.log("Login failed: User not found");
+      return res.status(401).json({ message: "User does not exist or invalid password." });
     }
+    //console.log('User details: ', user);
 
     // 2. Verify email and password
-    const isMatch = await bcrypt.compare(password, user.password);
+    //console.log("Provided password:", password);
+    //console.log("Stored hashed password:", user.password);
+    
+    // Try password comparison with explicit error handling
+    let isMatch = false;
+    try {
+      isMatch = await bcrypt.compare(password, user.password);
+      //console.log("Password comparison result:", isMatch);
+    } catch (error) {
+      console.error("Error during password comparison:", error);
+      return res.status(500).json({ message: "Error verifying password", error: error.message });
+    }
+    
     if (!isMatch) {
+      console.log("Login failed: Password mismatch");
       return res.status(401).json({ message: "Invalid email or password." });
     }
+    console.log("Password verification successful");
 
     // 3. Check if 2FA is enabled
     if (user.twoFactorEnabled) {
@@ -203,8 +218,8 @@ export const updateUserInfo = async (req, res) => {
     user.email = req.body.email || user.email;
 
     if (req.body.password) {
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(password, salt);
+      const salt = await bcrypt.genSalt(12);
+      user.password = await bcrypt.hash(req.body.password, salt);
     }
 
     const updateUser = await user.save();
