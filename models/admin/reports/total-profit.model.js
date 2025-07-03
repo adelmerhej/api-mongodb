@@ -20,8 +20,8 @@ const TotalProfitSchema = new mongoose.Schema(
     vessel: String,
     TotalInvoices: Number,
     TotalCosts: Number,
-}, { timestamps: true }
+  },
+  { timestamps: true }
 );
 
 export default mongoose.model("TotalProfit", TotalProfitSchema);
-    

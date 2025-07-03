@@ -2,26 +2,36 @@ import mongoose from "mongoose";
 
 const JobStatusSchema = new mongoose.Schema(
   {
-    JobNo: String,
-    JobDate: Date,
-    CustomerName: String,
-    ConsigneeName: String,
     DepartmentName: String,
     StatusType: String,
     TotalProfit: Number,
-    Eta: Date,
-    Ata: Date,
-    UserName: String,
-    Notes: String,
-    CountryOfDeparture: String,
-    Departure: String,
-    Destination: String,
+    OrderBy: String,
+    JobNo: String,
     ReferenceNo: String,
-    vessel: String,
-    TotalInvoices: Number,
-    TotalCosts: Number,
-}, { timestamps: true }
+    JobDate: Date,
+    OperatingUserId: String,
+    DepartmentId: Number,
+    UserName: String,
+    CustomerName: String,
+    PendingInvoices: Number,
+    PendingCosts: Number,
+    Tejrim: String,
+    CanceledJob: Boolean,
+    ConsigneeName: String,
+    PaymentDate: Date,
+    MemberOf: String,
+    JobType: String,
+    Atd: Date,
+    Etd: Date,
+    Ata: Date,
+    Eta: Date,
+    FullPaid: Boolean,
+    PaidDO: Boolean,
+    PaidDate: Date,
+    MissingDocuments: Boolean,
+    MissingDocumentsDate: Date,
+  },
+  { timestamps: true }
 );
 
 export default mongoose.model("JobStatus", JobStatusSchema);
-    

@@ -1,8 +1,8 @@
 import totalProfitModel from "../models/admin/reports/total-profit.model.js";
 import jobStatusModel from "../models/admin/reports/job-status.model.js";
-import emptyContainerReport from "../models/admin/reports/empty-container.model.js";
-import clientInvoiceReport from "../models/admin/reports/client-invoice.model.js";
-import ongoingJobsReport from "../models/admin/reports/ongoing-job.model.js";
+import emptyContainerModel from "../models/admin/reports/empty-container.model.js";
+import clientInvoiceModel from "../models/admin/reports/client-invoice.model.js";
+import ongoingJobModel from "../models/admin/reports/ongoing-job.model.js";
 
 export const totalProfitReport = async (req, res) => {
  try {
@@ -109,7 +109,7 @@ try {
       data: totalProfits
     });
  } catch (error) {
-  console.error("Error fetching job Statuses:", error);
+  console.error("Error fetching total profits:", error);
   res.status(500).json({ success: false, error: "Internal Server Error" });
  }
 };
