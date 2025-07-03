@@ -31,7 +31,7 @@ const JobStatusSchema = new mongoose.Schema(
     MissingDocuments: Boolean,
     MissingDocumentsDate: Date,
   },
-  { timestamps: true }
+  { timestamps: true, collection: "jobstatus" }
 );
 
 export default mongoose.model("JobStatus", JobStatusSchema);
