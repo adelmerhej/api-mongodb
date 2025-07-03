@@ -4,6 +4,14 @@ import User from "../models/user.model.js";
 export const totalProfitReport = async (req, res) => {
  try {
     const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+
+    console.log("Params: ", req.query);
+    console.log("Status: ", status);
+    console.log("SortBy: ", sortBy);
+    console.log("SortOrder: ", sortOrder);
+    console.log("Page: ", page);
+    console.log("Limit: ", limit);
+
     let filter = {};
 
     if (status) {
