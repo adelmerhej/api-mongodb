@@ -1,11 +1,23 @@
+import { executeStoredProc, saveToMongoDB, updateJobStatuses } from '../utils/dbUtils.js';
+
 import totalProfitModel from "../models/admin/reports/total-profit.model.js";
 import jobStatusModel from "../models/admin/reports/job-status.model.js";
 import emptyContainerModel from "../models/admin/reports/empty-container.model.js";
 import clientInvoiceModel from "../models/admin/reports/client-invoice.model.js";
 import ongoingJobModel from "../models/admin/reports/ongoing-job.model.js";
 
+// Define the stored procedure names
+const procedures = [
+  { name: "__ClientsInvoiceReport_to_JSON", collection: "clientinvoices" },
+  { name: "__Empty_Containers_to_JSON", collection: "emptycontainers" },
+  { name: "__Total_Profit_to_JSON", collection: "totalprofits" },
+  { name: "__Job_Status_to_JSON", collection: "jobstatus" },
+  { name: "__Job_Status_FullPaid_to_JSON", collection: "jobstatus" },
+  { name: "__OngoingJobs_Status_to_JSON", collection: "ongoingjobs" },
+];
+
 export const totalProfitReport = async (req, res) => {
- try {
+  try {
     const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
@@ -17,7 +29,7 @@ export const totalProfitReport = async (req, res) => {
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
-      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
     } else {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
@@ -34,16 +46,16 @@ export const totalProfitReport = async (req, res) => {
       success: true,
       count: totalProfits.length,
       total: totalCount,
-      data: totalProfits
+      data: totalProfits,
     });
- } catch (error) {
-  console.error("Error fetching total profits:", error);
-  res.status(500).json({ success: false, error: "Internal Server Error" });
- }
+  } catch (error) {
+    console.error("Error fetching total profits:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 };
 
 export const jobStatusReport = async (req, res) => {
-try {
+  try {
     const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
@@ -55,7 +67,7 @@ try {
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
-      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
     } else {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
@@ -72,16 +84,16 @@ try {
       success: true,
       count: jobStatus.length,
       total: totalCount,
-      data: jobStatus
+      data: jobStatus,
     });
- } catch (error) {
-  console.error("Error fetching job Status:", error);
-  res.status(500).json({ success: false, error: "Internal Server Error" });
- }
+  } catch (error) {
+    console.error("Error fetching job Status:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 };
 
 export const emptyContainerReport = async (req, res) => {
-try {
+  try {
     const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
@@ -93,7 +105,7 @@ try {
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
-      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
     } else {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
@@ -103,23 +115,25 @@ try {
     const totalCount = await emptyContainerModel.countDocuments(filter);
 
     // Query with filter and sort, but no pagination to return all records
-    const emptyContainers = await emptyContainerModel.find(filter).sort(sortOptions);
+    const emptyContainers = await emptyContainerModel
+      .find(filter)
+      .sort(sortOptions);
 
     // Return response with all records
     res.status(200).json({
       success: true,
       count: emptyContainers.length,
       total: totalCount,
-      data: emptyContainers
+      data: emptyContainers,
     });
- } catch (error) {
-  console.error("Error fetching empty containers:", error);
-  res.status(500).json({ success: false, error: "Internal Server Error" });
- }
+  } catch (error) {
+    console.error("Error fetching empty containers:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 };
 
 export const clientInvoiceReport = async (req, res) => {
-try {
+  try {
     const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
@@ -131,7 +145,7 @@ try {
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
-      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
     } else {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
@@ -141,23 +155,25 @@ try {
     const totalCount = await clientInvoiceModel.countDocuments(filter);
 
     // Query with filter and sort, but no pagination to return all records
-    const clientInvoices = await clientInvoiceModel.find(filter).sort(sortOptions);
+    const clientInvoices = await clientInvoiceModel
+      .find(filter)
+      .sort(sortOptions);
 
     // Return response with all records
     res.status(200).json({
       success: true,
       count: clientInvoices.length,
       total: totalCount,
-      data: clientInvoices
+      data: clientInvoices,
     });
- } catch (error) {
-  console.error("Error fetching Client Invoices:", error);
-  res.status(500).json({ success: false, error: "Internal Server Error" });
- }
+  } catch (error) {
+    console.error("Error fetching Client Invoices:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
 };
 
 export const ongoingJobsReport = async (req, res) => {
-try {
+  try {
     const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
@@ -169,7 +185,7 @@ try {
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
-      sortOptions[sortBy] = sortOrder === 'desc' ? -1 : 1;
+      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
     } else {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
@@ -186,10 +202,54 @@ try {
       success: true,
       count: ongoingJobs.length,
       total: totalCount,
-      data: ongoingJobs
+      data: ongoingJobs,
     });
- } catch (error) {
-  console.error("Error fetching ongoing Jobs:", error);
-  res.status(500).json({ success: false, error: "Internal Server Error" });
- }
+  } catch (error) {
+    console.error("Error fetching ongoing Jobs:", error);
+    res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+};
+
+//
+// Function to sync total profit report
+// This function is used to create a new user with the provided details
+//
+export const syncTotalProfitReport = async (req, res) => {
+  try {
+    console.log("Syncing...", new Date().toLocaleTimeString());
+    const results = [];
+    
+    // Find the total profit procedure from the procedures array
+    const proc = procedures.find(p => p.name === "__Total_Profit_to_JSON");
+    if (!proc) {
+      throw new Error("Total Profit procedure not found");
+    }
+
+    const data = await executeStoredProc(proc.name);
+    await saveToMongoDB(proc.collection, data, false);
+
+    // Update job statuses after sync
+    await updateJobStatuses();
+
+    console.log("Synced", new Date().toLocaleTimeString());
+    results.push({
+      procedure: proc.name,
+      status: "success",
+      message: "Total Profit Report synced successfully",
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Total Profit Report synced successfully",
+      results,
+    });
+
+  } catch (error) {
+    console.error("Error syncing total profit report:", error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : String(error),
+      message: "Failed to sync Total Profit Report",
+    });
+  }
 };
