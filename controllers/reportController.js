@@ -6,7 +6,7 @@ import ongoingJobModel from "../models/admin/reports/ongoing-job.model.js";
 
 export const totalProfitReport = async (req, res) => {
  try {
-    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
 
@@ -23,27 +23,17 @@ export const totalProfitReport = async (req, res) => {
       sortOptions.createdAt = -1;
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-    // Query total count for pagination info
+    // Query total count
     const totalCount = await totalProfitModel.countDocuments(filter);
 
-    // Query with filter, sort, and pagination
-    const totalProfits = await totalProfitModel.find(filter)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limitNum);
+    // Query with filter and sort, but no pagination to return all records
+    const totalProfits = await totalProfitModel.find(filter).sort(sortOptions);
 
-    // Return response with pagination info
+    // Return response with all records
     res.status(200).json({
       success: true,
       count: totalProfits.length,
       total: totalCount,
-      totalPages: Math.ceil(totalCount / limitNum),
-      currentPage: pageNum,
       data: totalProfits
     });
  } catch (error) {
@@ -54,7 +44,7 @@ export const totalProfitReport = async (req, res) => {
 
 export const jobStatusReport = async (req, res) => {
 try {
-    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
 
@@ -71,28 +61,18 @@ try {
       sortOptions.createdAt = -1;
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-    // Query total count for pagination info
+    // Query total count
     const totalCount = await jobStatusModel.countDocuments(filter);
 
-    // Query with filter, sort, and pagination
-    const totalProfits = await jobStatusModel.find(filter)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limitNum);
+    // Query with filter and sort, but no pagination to return all records
+    const jobStatuses = await jobStatusModel.find(filter).sort(sortOptions);
 
-    // Return response with pagination info
+    // Return response with all records
     res.status(200).json({
       success: true,
-      count: totalProfits.length,
+      count: jobStatuses.length,
       total: totalCount,
-      totalPages: Math.ceil(totalCount / limitNum),
-      currentPage: pageNum,
-      data: totalProfits
+      data: jobStatuses
     });
  } catch (error) {
   console.error("Error fetching total profits:", error);
@@ -102,7 +82,7 @@ try {
 
 export const emptyContainerReport = async (req, res) => {
 try {
-    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
 
@@ -119,28 +99,18 @@ try {
       sortOptions.createdAt = -1;
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-    // Query total count for pagination info
+    // Query total count
     const totalCount = await emptyContainerModel.countDocuments(filter);
 
-    // Query with filter, sort, and pagination
-    const totalProfits = await emptyContainerModel.find(filter)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limitNum);
+    // Query with filter and sort, but no pagination to return all records
+    const emptyContainers = await emptyContainerModel.find(filter).sort(sortOptions);
 
-    // Return response with pagination info
+    // Return response with all records
     res.status(200).json({
       success: true,
-      count: totalProfits.length,
+      count: emptyContainers.length,
       total: totalCount,
-      totalPages: Math.ceil(totalCount / limitNum),
-      currentPage: pageNum,
-      data: totalProfits
+      data: emptyContainers
     });
  } catch (error) {
   console.error("Error fetching Empty Containers:", error);
@@ -150,7 +120,7 @@ try {
 
 export const clientInvoiceReport = async (req, res) => {
 try {
-    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
 
@@ -167,28 +137,18 @@ try {
       sortOptions.createdAt = -1;
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-    // Query total count for pagination info
+    // Query total count
     const totalCount = await clientInvoiceModel.countDocuments(filter);
 
-    // Query with filter, sort, and pagination
-    const totalProfits = await clientInvoiceModel.find(filter)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limitNum);
+    // Query with filter and sort, but no pagination to return all records
+    const clientInvoices = await clientInvoiceModel.find(filter).sort(sortOptions);
 
-    // Return response with pagination info
+    // Return response with all records
     res.status(200).json({
       success: true,
-      count: totalProfits.length,
+      count: clientInvoices.length,
       total: totalCount,
-      totalPages: Math.ceil(totalCount / limitNum),
-      currentPage: pageNum,
-      data: totalProfits
+      data: clientInvoices
     });
  } catch (error) {
   console.error("Error fetching Client Invoice:", error);
@@ -198,7 +158,7 @@ try {
 
 export const ongoingJobsReport = async (req, res) => {
 try {
-    const { status, sortBy, sortOrder, page = 1, limit = 0 } = req.query;
+    const { status, sortBy, sortOrder } = req.query;
 
     let filter = {};
 
@@ -215,19 +175,11 @@ try {
       sortOptions.createdAt = -1;
     }
 
-    // Calculate pagination
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
-    const skip = (pageNum - 1) * limitNum;
-
-    // Query total count for pagination info
+    // Query total count
     const totalCount = await ongoingJobModel.countDocuments(filter);
 
-    // Query with filter, sort, and pagination
-    const totalProfits = await ongoingJobModel.find(filter)
-      .sort(sortOptions)
-      .skip(skip)
-      .limit(limitNum);
+    // Query with filter and sort, but no pagination to return all records
+    const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
 
     // Return response with pagination info
     res.status(200).json({
