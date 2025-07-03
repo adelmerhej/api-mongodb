@@ -12,7 +12,7 @@ const generateToken = (id) => {
   const refreshToken = jwt.sign({ id }, process.env.JWT_REFRESH_SECRET, {
     expiresIn: "7d",
   });
-  console.log("Token: ", accessToken);
+  //console.log("Token: ", accessToken);
   
   return { accessToken, refreshToken };
 };
@@ -116,7 +116,7 @@ export const loginUser = async (req, res) => {
       console.log("Login failed: Password mismatch");
       return res.status(401).json({ message: "Invalid email or password." });
     }
-    console.log("Password verification successful");
+    //console.log("Password verification successful");
 
     // 3. Check if 2FA is enabled
     if (user.twoFactorEnabled) {
