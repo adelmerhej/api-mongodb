@@ -65,17 +65,17 @@ try {
     const totalCount = await jobStatusModel.countDocuments(filter);
 
     // Query with filter and sort, but no pagination to return all records
-    const jobStatuses = await jobStatusModel.find(filter).sort(sortOptions);
+    const jobStatus = await jobStatusModel.find(filter).sort(sortOptions);
 
     // Return response with all records
     res.status(200).json({
       success: true,
-      count: jobStatuses.length,
+      count: jobStatus.length,
       total: totalCount,
-      data: jobStatuses
+      data: jobStatus
     });
  } catch (error) {
-  console.error("Error fetching total profits:", error);
+  console.error("Error fetching job Status:", error);
   res.status(500).json({ success: false, error: "Internal Server Error" });
  }
 };
@@ -113,7 +113,7 @@ try {
       data: emptyContainers
     });
  } catch (error) {
-  console.error("Error fetching Empty Containers:", error);
+  console.error("Error fetching empty containers:", error);
   res.status(500).json({ success: false, error: "Internal Server Error" });
  }
 };
@@ -151,7 +151,7 @@ try {
       data: clientInvoices
     });
  } catch (error) {
-  console.error("Error fetching Client Invoice:", error);
+  console.error("Error fetching Client Invoices:", error);
   res.status(500).json({ success: false, error: "Internal Server Error" });
  }
 };
@@ -181,17 +181,15 @@ try {
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
 
-    // Return response with pagination info
+    // Return response with all records
     res.status(200).json({
       success: true,
-      count: totalProfits.length,
+      count: ongoingJobs.length,
       total: totalCount,
-      totalPages: Math.ceil(totalCount / limitNum),
-      currentPage: pageNum,
-      data: totalProfits
+      data: ongoingJobs
     });
  } catch (error) {
-  console.error("Error fetching Ongoing Jobs:", error);
+  console.error("Error fetching ongoing Jobs:", error);
   res.status(500).json({ success: false, error: "Internal Server Error" });
  }
 };
