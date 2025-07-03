@@ -29,7 +29,7 @@ const ClientInvoiceSchema = new mongoose.Schema(
     MemberOf: String,
     JobType: String,
   },
-  { timestamps: true }
+  { timestamps: true, collection: "ClientsInvoiceReport" }
 );
 
 export default mongoose.model("ClientInvoice", ClientInvoiceSchema);
