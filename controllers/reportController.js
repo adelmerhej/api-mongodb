@@ -18,7 +18,15 @@ const procedures = [
 
 export const totalProfitReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder } = req.query;
+    // Extract query parameters for filtering and sorting
+    // Example: /api/reports/total-profit?
+    //              status=active&sortBy="createdAt"&sortOrder=desc
+    //              page=1&limit=10&fullPaid=true
+    //              fullPaid is optional, if provided it will filter by fullPaid status
+    //              statusType & departmentId & jobType
+
+    const { status, sortBy, sortOrder, 
+      page, limit, fullPaid, statusType, departmentId, jobType } = req.query;
 
     let filter = {};
 
@@ -56,12 +64,21 @@ export const totalProfitReport = async (req, res) => {
 
 export const jobStatusReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder } = req.query;
+    const { status, sortBy, sortOrder, 
+      page, limit, fullPaid, statusType, departmentId, jobType } = req.query;
 
     let filter = {};
 
-    if (status) {
-      filter.StatusType = status;
+    // Apply filters based on query parameters
+    if (fullPaid === 'true') {
+      filter.FullPaid = true;
+    }else if (fullPaid === 'false') {
+      filter.FullPaid = false;
+    }
+
+    if (statusType) {
+      console.log("statusType:", statusType);
+      filter.StatusType = statusType;
     }
 
     // Create sort options
@@ -73,8 +90,12 @@ export const jobStatusReport = async (req, res) => {
       sortOptions.createdAt = -1;
     }
 
+    console.log("Filter:", filter);
+
     // Query total count
     const totalCount = await jobStatusModel.countDocuments(filter);
+
+    console.log("Total Count:", totalCount);
 
     // Query with filter and sort, but no pagination to return all records
     const jobStatus = await jobStatusModel.find(filter).sort(sortOptions);
