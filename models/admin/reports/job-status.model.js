@@ -30,6 +30,7 @@ const JobStatusSchema = new mongoose.Schema(
     PaidDate: Date,
     MissingDocuments: Boolean,
     MissingDocumentsDate: Date,
+    Status: String,
   },
   { timestamps: true, collection: "jobstatus" }
 );

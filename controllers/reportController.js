@@ -97,13 +97,13 @@ export const jobStatusReport = async (req, res) => {
     } else if (fullPaid === "false") {
       filter.FullPaid = false;
     }
-
-    if (statusType) {
-      console.log("statusType:", statusType);
-      filter.StatusType = statusType;
+    if (status) {
+      filter.Status = status;
     }
 
-    console.log("Filter before departmentId:", departmentId, jobType);
+    if (statusType) {
+      filter.StatusType = statusType;
+    }
 
     if (departmentId) {
       filter.DepartmentId = departmentId;
@@ -121,12 +121,10 @@ export const jobStatusReport = async (req, res) => {
       sortOptions.createdAt = -1;
     }
 
-    console.log("Filter:", filter);
-
     // Query total count
     const totalCount = await jobStatusModel.countDocuments(filter);
 
-    console.log("Total Count:", totalCount);
+    console.log("Total Count:", totalCount, filter);
 
     // Query with filter and sort, but no pagination to return all records
     const jobStatus = await jobStatusModel.find(filter).sort(sortOptions);
