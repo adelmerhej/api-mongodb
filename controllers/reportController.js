@@ -1,4 +1,8 @@
-import { executeStoredProc, saveToMongoDB, updateJobStatuses } from '../utils/dbUtils.js';
+import {
+  executeStoredProc,
+  saveToMongoDB,
+  updateJobStatuses,
+} from "../utils/dbUtils.js";
 
 import totalProfitModel from "../models/admin/reports/total-profit.model.js";
 import jobStatusModel from "../models/admin/reports/job-status.model.js";
@@ -25,8 +29,17 @@ export const totalProfitReport = async (req, res) => {
     //              fullPaid is optional, if provided it will filter by fullPaid status
     //              statusType & departmentId & jobType
 
-    const { status, sortBy, sortOrder, 
-      page, limit, fullPaid, statusType, departmentId, jobType } = req.query;
+    const {
+      status,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      fullPaid,
+      statusType,
+      departmentId,
+      jobType,
+    } = req.query;
 
     let filter = {};
 
@@ -64,15 +77,24 @@ export const totalProfitReport = async (req, res) => {
 
 export const jobStatusReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder, 
-      page, limit, fullPaid, statusType, departmentId, jobType } = req.query;
+    const {
+      status,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      fullPaid,
+      statusType,
+      departmentId,
+      jobType,
+    } = req.query;
 
     let filter = {};
 
     // Apply filters based on query parameters
-    if (fullPaid === 'true') {
+    if (fullPaid === "true") {
       filter.FullPaid = true;
-    }else if (fullPaid === 'false') {
+    } else if (fullPaid === "false") {
       filter.FullPaid = false;
     }
 
@@ -81,6 +103,15 @@ export const jobStatusReport = async (req, res) => {
       filter.StatusType = statusType;
     }
 
+    console.log("Filter before departmentId:", departmentId, jobType);
+
+    if (departmentId) {
+      filter.DepartmentId = departmentId;
+    }
+    if (jobType) {
+      filter.JobType = jobType;
+    }
+    
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
@@ -239,9 +270,9 @@ export const syncTotalProfitReport = async (req, res) => {
   try {
     console.log("Syncing...", new Date().toLocaleTimeString());
     const results = [];
-    
+
     // Find the total profit procedure from the procedures array
-    const proc = procedures.find(p => p.name === "__Total_Profit_to_JSON");
+    const proc = procedures.find((p) => p.name === "__Total_Profit_to_JSON");
     if (!proc) {
       throw new Error("Total Profit procedure not found");
     }
@@ -264,7 +295,6 @@ export const syncTotalProfitReport = async (req, res) => {
       message: "Total Profit Report synced successfully",
       results,
     });
-
   } catch (error) {
     console.error("Error syncing total profit report:", error);
     res.status(500).json({
