@@ -124,17 +124,22 @@ export const jobStatusReport = async (req, res) => {
     // Query total count
     const totalCount = await jobStatusModel.countDocuments(filter);
 
-    console.log("Total Count:", totalCount, filter);
-
     // Query with filter and sort, but no pagination to return all records
     const jobStatus = await jobStatusModel.find(filter).sort(sortOptions);
+    
+    // Calculate total profit by summing the TotalProfit field from all records
+    const totalProfit = jobStatus.reduce((sum, job) => {
+      // Add the TotalProfit value if it exists and is a number, otherwise add 0
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
 
-    // Return response with all records
+    // Return response with all records and total profit
     res.status(200).json({
       success: true,
       count: jobStatus.length,
       total: totalCount,
       data: jobStatus,
+      totalProfit: totalProfit,
     });
   } catch (error) {
     console.error("Error fetching job Status:", error);
