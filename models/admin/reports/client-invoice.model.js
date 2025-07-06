@@ -25,6 +25,7 @@ const ClientInvoiceSchema = new mongoose.Schema(
     vessel: String,
     TotalInvoices: Number,
     TotalCosts: Number,
+    TotalProfit: Number,
     DepartmentId: String,
     MemberOf: String,
     JobType: String,
