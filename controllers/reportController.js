@@ -62,12 +62,19 @@ export const totalProfitReport = async (req, res) => {
     // Query with filter and sort, but no pagination to return all records
     const totalProfits = await totalProfitModel.find(filter).sort(sortOptions);
 
+    // Calculate total profit by summing the TotalProfit field from all records
+    const sumOfTotalProfit = totalProfits.reduce((sum, job) => {
+      // Add the TotalProfit value if it exists and is a number, otherwise add 0
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
+
     // Return response with all records
     res.status(200).json({
       success: true,
       count: totalProfits.length,
       total: totalCount,
       data: totalProfits,
+      sumOfTotalProfit: sumOfTotalProfit,
     });
   } catch (error) {
     console.error("Error fetching total profits:", error);
@@ -174,12 +181,19 @@ export const emptyContainerReport = async (req, res) => {
       .find(filter)
       .sort(sortOptions);
 
+    // Calculate total profit by summing the TotalProfit field from all records
+    const sumOfTotalProfit = emptyContainers.reduce((sum, job) => {
+      // Add the TotalProfit value if it exists and is a number, otherwise add 0
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
+
     // Return response with all records
     res.status(200).json({
       success: true,
       count: emptyContainers.length,
       total: totalCount,
       data: emptyContainers,
+      sumOfTotalProfit: sumOfTotalProfit,
     });
   } catch (error) {
     console.error("Error fetching empty containers:", error);
@@ -214,12 +228,19 @@ export const clientInvoiceReport = async (req, res) => {
       .find(filter)
       .sort(sortOptions);
 
+    // Calculate total profit by summing the TotalProfit field from all records
+    const sumOfTotalProfit = clientInvoices.reduce((sum, job) => {
+      // Add the TotalProfit value if it exists and is a number, otherwise add 0
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
+
     // Return response with all records
     res.status(200).json({
       success: true,
       count: clientInvoices.length,
       total: totalCount,
       data: clientInvoices,
+      sumOfTotalProfit: sumOfTotalProfit,
     });
   } catch (error) {
     console.error("Error fetching Client Invoices:", error);
@@ -252,12 +273,19 @@ export const ongoingJobsReport = async (req, res) => {
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
 
+    // Calculate total profit by summing the TotalProfit field from all records
+    const sumOfTotalProfit = ongoingJobs.reduce((sum, job) => {
+      // Add the TotalProfit value if it exists and is a number, otherwise add 0
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
+
     // Return response with all records
     res.status(200).json({
       success: true,
       count: ongoingJobs.length,
       total: totalCount,
       data: ongoingJobs,
+      sumOfTotalProfit: sumOfTotalProfit,
     });
   } catch (error) {
     console.error("Error fetching ongoing Jobs:", error);
