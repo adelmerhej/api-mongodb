@@ -182,7 +182,7 @@ export const emptyContainerReport = async (req, res) => {
       .sort(sortOptions);
 
     // Calculate total profit by summing the TotalProfit field from all records
-    const sumOfTotalProfit = emptyContainers.reduce((sum, job) => {
+    const totalProfit = emptyContainers.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
       return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
     }, 0);
@@ -193,7 +193,7 @@ export const emptyContainerReport = async (req, res) => {
       count: emptyContainers.length,
       total: totalCount,
       data: emptyContainers,
-      sumOfTotalProfit: sumOfTotalProfit,
+      totalProfit: totalProfit,
     });
   } catch (error) {
     console.error("Error fetching empty containers:", error);
