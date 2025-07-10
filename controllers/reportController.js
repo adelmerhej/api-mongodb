@@ -65,7 +65,9 @@ export const totalProfitReport = async (req, res) => {
     // Calculate total profit by summing the TotalProfit field from all records
     const sumOfTotalProfit = totalProfits.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+      return (
+        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+      );
     }, 0);
 
     // Return response with all records
@@ -119,7 +121,7 @@ export const jobStatusReport = async (req, res) => {
     if (jobType) {
       filter.JobType = jobType;
     }
-    
+
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
@@ -134,11 +136,13 @@ export const jobStatusReport = async (req, res) => {
 
     // Query with filter and sort, but no pagination to return all records
     const jobStatus = await jobStatusModel.find(filter).sort(sortOptions);
-    
+
     // Calculate total profit by summing the TotalProfit field from all records
     const totalProfit = jobStatus.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+      return (
+        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+      );
     }, 0);
 
     // Return response with all records and total profit
@@ -209,7 +213,9 @@ export const emptyContainerReport = async (req, res) => {
     // Calculate total profit by summing the TotalProfit field from all records
     const totalProfit = emptyContainers.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+      return (
+        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+      );
     }, 0);
 
     // Return response with all records
@@ -256,12 +262,17 @@ export const clientInvoiceReport = async (req, res) => {
     // Calculate total profit by summing the TotalCosts field from all records
     const sumOfTotalProfit = clientInvoices.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+      return (
+        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+      );
     }, 0);
 
     const sumOfTotalInvoices = clientInvoices.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalInvoices && !isNaN(job.TotalInvoices) ? job.TotalInvoices : 0);
+      return (
+        sum +
+        (job.TotalInvoices && !isNaN(job.TotalInvoices) ? job.TotalInvoices : 0)
+      );
     }, 0);
 
     // Return response with all records
@@ -281,12 +292,40 @@ export const clientInvoiceReport = async (req, res) => {
 
 export const ongoingJobsReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder } = req.query;
+    const {
+      status,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      fullPaid,
+      statusType,
+      departmentId,
+      jobType,
+    } = req.query;
 
     let filter = {};
 
+    // Apply filters based on query parameters
+    if (fullPaid === "true") {
+      filter.FullPaid = true;
+    } else if (fullPaid === "false") {
+      filter.FullPaid = false;
+    }
     if (status) {
-      filter.StatusType = status;
+      filter.Status = status;
+    }
+
+    if (statusType) {
+      filter.StatusType = statusType;
+      filter.CanceledJob = false;
+    }
+
+    if (departmentId) {
+      filter.DepartmentId = departmentId;
+    }
+    if (jobType) {
+      filter.JobType = jobType;
     }
 
     // Create sort options
@@ -304,9 +343,11 @@ export const ongoingJobsReport = async (req, res) => {
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
 
-    const sumOfTotalProfit = ongoingJobs.reduce((sum, job) => {
+    const totalProfit = ongoingJobs.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+      return (
+        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+      );
     }, 0);
 
     // Return response with all records
@@ -315,7 +356,7 @@ export const ongoingJobsReport = async (req, res) => {
       count: ongoingJobs.length,
       total: totalCount,
       data: ongoingJobs,
-      sumOfTotalProfit: sumOfTotalProfit,
+      totalProfit: totalProfit,
     });
   } catch (error) {
     console.error("Error fetching ongoing Jobs:", error);
