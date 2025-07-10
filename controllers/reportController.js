@@ -293,7 +293,7 @@ export const clientInvoiceReport = async (req, res) => {
 export const ongoingJobsReport = async (req, res) => {
   try {
     const {
-      status,
+      jobStatusType,
       sortBy,
       sortOrder,
       page,
@@ -306,19 +306,22 @@ export const ongoingJobsReport = async (req, res) => {
 
     let filter = {};
 
+    console.log("req.query", req.query);
+
     // Apply filters based on query parameters
     if (fullPaid === "true") {
       filter.FullPaid = true;
     } else if (fullPaid === "false") {
       filter.FullPaid = false;
     }
-    if (status) {
-      filter.Status = status;
+    
+    if (jobStatusType) {
+      filter.JobStatusType = jobStatusType;
     }
 
     if (statusType) {
       filter.StatusType = statusType;
-      filter.CanceledJob = false;
+      //filter.CanceledJob = false;
     }
 
     if (departmentId) {
@@ -336,9 +339,12 @@ export const ongoingJobsReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-
+    console.log("filter", filter);
+    
     // Query total count
     const totalCount = await ongoingJobModel.countDocuments(filter);
+
+    console.log("totalCount", totalCount);
 
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
