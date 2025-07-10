@@ -110,6 +110,7 @@ export const jobStatusReport = async (req, res) => {
 
     if (statusType) {
       filter.StatusType = statusType;
+      filter.CanceledJob = false;
     }
 
     if (departmentId) {
@@ -176,7 +177,7 @@ export const emptyContainerReport = async (req, res) => {
     if (jobType) {
       filter.JobType = jobType;
     }
-    
+
     // Apply filters based on query parameters
     if (fullPaid === "true") {
       filter.FullPaid = true;

@@ -31,6 +31,7 @@ const JobStatusSchema = new mongoose.Schema(
     MissingDocuments: Boolean,
     MissingDocumentsDate: Date,
     Status: String,
+    CanceledJob: Boolean,
   },
   { timestamps: true, collection: "jobstatus" }
 );
