@@ -156,9 +156,33 @@ export const jobStatusReport = async (req, res) => {
 
 export const emptyContainerReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder } = req.query;
+    const {
+      departmentId,
+      status,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      fullPaid,
+      statusType,
+      jobType,
+    } = req.query;
 
     let filter = {};
+
+    if (departmentId) {
+      filter.DepartmentId = departmentId;
+    }
+    if (jobType) {
+      filter.JobType = jobType;
+    }
+    
+    // Apply filters based on query parameters
+    if (fullPaid === "true") {
+      filter.FullPaid = true;
+    } else if (fullPaid === "false") {
+      filter.FullPaid = false;
+    }
 
     if (status) {
       filter.StatusType = status;
