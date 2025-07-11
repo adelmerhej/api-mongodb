@@ -259,7 +259,6 @@ export const clientInvoiceReport = async (req, res) => {
       filter.JobStatusType = jobStatusType;
     }
 
-    console.log("statusType", statusType);
     if (statusType === "Invoices") {
       filter.InvoiceNo !== "0";
     } else if (statusType === "Drafts") {
