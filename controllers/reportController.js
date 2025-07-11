@@ -234,12 +234,43 @@ export const emptyContainerReport = async (req, res) => {
 
 export const clientInvoiceReport = async (req, res) => {
   try {
-    const { status, sortBy, sortOrder } = req.query;
+    const {
+      jobStatusType,
+      sortBy,
+      sortOrder,
+      page,
+      limit,
+      fullPaid,
+      statusType,
+      departmentId,
+      jobType,
+    } = req.query;
 
     let filter = {};
 
-    if (status) {
-      filter.StatusType = status;
+    // Apply filters based on query parameters
+    if (fullPaid === "true") {
+      filter.FullPaid = true;
+    } else if (fullPaid === "false") {
+      filter.FullPaid = false;
+    }
+
+    if (jobStatusType) {
+      filter.JobStatusType = jobStatusType;
+    }
+
+    console.log("statusType", statusType);
+    if (statusType === "Invoices") {
+      filter.InvoiceNo !== "0";
+    } else if (statusType === "Drafts") {
+      filter.InvoiceNo = "0";
+    }
+
+    if (departmentId) {
+      filter.DepartmentId = departmentId;
+    }
+    if (jobType) {
+      filter.JobType = jobType;
     }
 
     // Create sort options
@@ -250,7 +281,6 @@ export const clientInvoiceReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-
     // Query total count
     const totalCount = await clientInvoiceModel.countDocuments(filter);
 
@@ -306,8 +336,6 @@ export const ongoingJobsReport = async (req, res) => {
 
     let filter = {};
 
-    console.log("req.query", req.query);
-
     // Apply filters based on query parameters
     if (fullPaid === "true") {
       filter.FullPaid = true;
@@ -339,12 +367,9 @@ export const ongoingJobsReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-    console.log("filter", filter);
     
     // Query total count
     const totalCount = await ongoingJobModel.countDocuments(filter);
-
-    console.log("totalCount", totalCount);
 
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
