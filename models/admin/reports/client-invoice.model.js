@@ -2,9 +2,9 @@ import mongoose from "mongoose";
 
 const ClientInvoiceSchema = new mongoose.Schema(
   {
-    JobNo: String,
+    JobNo: Number,
     ReferenceNo: String,
-    InvoiceNo: String,
+    InvoiceNo: Number,
     Mbl: String,
     Pol: String,
     Pod: String,
@@ -33,4 +33,26 @@ const ClientInvoiceSchema = new mongoose.Schema(
   { timestamps: true, collection: "clientinvoices" }
 );
 
-export default mongoose.model("ClientInvoice", ClientInvoiceSchema);
+const ClientInvoiceDetailSchema = new mongoose.Schema(
+  {
+    JobNo: Number,
+    DepartmentId: Number,
+    DepartmentName: String,
+    ReferenceNo: String,
+    InvoiceNo: Number,
+    InvoiceDate: Date,
+    CustomerName: String,
+    DueDate: Date,
+    TotalInvoice: Number,
+    TotalDueAmount: Number,
+    TotalPaidAmount: Number,
+    InvoiceStatus: String,
+    PaymentStatus: String,
+  },
+  { timestamps: true, collection: "clientinvoices" }
+);
+
+const ClientInvoice = mongoose.model("ClientInvoice", ClientInvoiceSchema);
+const ClientInvoiceDetail = mongoose.model("ClientInvoiceDetail", ClientInvoiceDetailSchema);
+
+export { ClientInvoice, ClientInvoiceDetail };

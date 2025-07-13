@@ -232,6 +232,62 @@ export const emptyContainerReport = async (req, res) => {
   }
 };
 
+export const clientInvoiceDetailReport = async (req, res) => {
+  try {
+    const { jobNo, departmentId } = req.query;
+
+    if (!jobNo) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Job number (jobNo) is required" 
+      });
+    }
+
+    if (!departmentId) {
+      return res.status(400).json({ 
+        success: false, 
+        error: "Department ID (departmentId) is required" 
+      });
+    }
+
+    // Build the filter with required parameters
+    const filter = {
+      JobNo: jobNo,
+      DepartmentId: departmentId
+    };
+
+    // Query the database
+    const clientInvoiceDetails = await clientInvoiceModel
+      .find(filter)
+      .sort({ createdAt: -1 }); // Sort by creation date, newest first
+
+    // Calculate totals
+    const sumOfTotalProfit = clientInvoiceDetails.reduce((sum, job) => {
+      return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
+    }, 0);
+
+    const sumOfTotalInvoices = clientInvoiceDetails.reduce((sum, job) => {
+      return sum + (job.TotalInvoices && !isNaN(job.TotalInvoices) ? job.TotalInvoices : 0);
+    }, 0);
+
+    // Return response
+    res.status(200).json({
+      success: true,
+      count: clientInvoiceDetails.length,
+      data: clientInvoiceDetails,
+      sumOfTotalProfit: sumOfTotalProfit,
+      sumOfTotalInvoices: sumOfTotalInvoices,
+    });
+  } catch (error) {
+    console.error("Error fetching Client Invoice Details:", error);
+    res.status(500).json({ 
+      success: false, 
+      error: "Internal Server Error",
+      details: error.message 
+    });
+  }
+};
+
 export const clientInvoiceReport = async (req, res) => {
   try {
     const {
