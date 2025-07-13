@@ -255,12 +255,14 @@ export const clientInvoiceDetailReport = async (req, res) => {
       JobNo: jobNo,
       DepartmentId: departmentId
     };
+    console.log(`🔍 Fetching Invoices Details with query: ${filter}`);
 
     // Query the database
-    const clientInvoiceDetails = await clientInvoiceModel
+    const clientInvoiceDetails = await clientInvoiceModel.ClientInvoice
       .find(filter)
-      .sort({ createdAt: -1 }); // Sort by creation date, newest first
-
+      .sort({ createdAt: -1 });
+      
+    console.log(`🔍 Fetching Invoices Details with query: ${clientInvoiceDetails}`);
     // Calculate totals
     const sumOfTotalProfit = clientInvoiceDetails.reduce((sum, job) => {
       return sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0);
@@ -336,11 +338,12 @@ export const clientInvoiceReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
+
     // Query total count
-    const totalCount = await clientInvoiceModel.countDocuments(filter);
+    const totalCount = await clientInvoiceModel.ClientInvoice.countDocuments(filter);
 
     // Query with filter and sort, but no pagination to return all records
-    const clientInvoices = await clientInvoiceModel
+    const clientInvoices = await clientInvoiceModel.ClientInvoice
       .find(filter)
       .sort(sortOptions);
 
