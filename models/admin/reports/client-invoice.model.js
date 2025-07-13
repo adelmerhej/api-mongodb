@@ -55,4 +55,4 @@ const ClientInvoiceDetailSchema = new mongoose.Schema(
 const ClientInvoice = mongoose.model("ClientInvoice", ClientInvoiceSchema);
 const ClientInvoiceDetail = mongoose.model("ClientInvoiceDetail", ClientInvoiceDetailSchema);
 
-export { ClientInvoice, ClientInvoiceDetail };
+export default { ClientInvoice, ClientInvoiceDetail };
