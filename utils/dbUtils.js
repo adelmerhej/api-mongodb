@@ -12,8 +12,8 @@ export const sqlConfig = {
     encrypt: false, // For Azure
     trustServerCertificate: true // For local dev
   },
-  connectionTimeout: 30000, // 30 seconds
-  requestTimeout: 60000 // 60 seconds
+  connectionTimeout: 60000, // 60 seconds
+  requestTimeout: 300000 // 5 minutes
 };
 
 // MongoDB Configuration

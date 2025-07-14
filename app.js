@@ -9,6 +9,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import taskRouter from "./routes/taskRoutes.js";
 import reportRouter from "./routes/reportRoutes.js";
+import syncRouter from "./routes/syncRoutes.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -39,6 +40,9 @@ app.use("/api/v1/users", userRouter);
 app.use("/api/v1/tasks", taskRouter);
 app.use("/api/v1/admin/reports", reportRouter);
 app.use("/api/v1/reports", reportRouter);
+
+//Sync Routes
+app.use("/api/v1/sync", syncRouter);
 
 
 //Server uploads folder

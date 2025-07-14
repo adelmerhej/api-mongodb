@@ -1,58 +1,143 @@
 import mongoose from "mongoose";
 
+// Sub-schema for the nested Invoices
+const InvoiceSchema = new mongoose.Schema({
+  JobNo: {
+    type: Number,
+    required: true,
+  },
+  DepartmentId: {
+    type: Number,
+    required: true,
+  },
+  InvoiceNo: {
+    type: Number,
+    required: true,
+  },
+  InvoiceDate: {
+    type: Date,
+    required: true,
+  },
+  DueDate: {
+    type: Date,
+    required: true,
+  },
+  CurrencyCode: {
+    type: String,
+    required: true,
+  },
+  TotalAmount: {
+    type: Number,
+    required: true,
+  },
+  TotalReceived: {
+    type: Number,
+    required: true,
+  },
+  TotalDue: {
+    type: Number,
+    required: true,
+  },
+});
+
 const ClientInvoiceSchema = new mongoose.Schema(
   {
-    JobNo: Number,
-    ReferenceNo: String,
-    InvoiceNo: Number,
-    Mbl: String,
-    Pol: String,
-    Pod: String,
-    JobDate: Date,
-    CustomerName: String,
-    ConsigneeName: String,
-    DepartmentName: String,
-    Salesman: String,
-    StatusType: String,
-    TotalInvoiceAmount: Number,
-    ETA: Date,
-    ATA: Date,
-    UserName: String,
-    Notes: String,
-    CountryOfDeparture: String,
-    Departure: String,
-    Destination: String,
-    vessel: String,
-    TotalInvoices: Number,
-    TotalCosts: Number,
-    TotalProfit: Number,
-    DepartmentId: String,
-    MemberOf: String,
-    JobType: String,
-  },
-  { timestamps: true, collection: "clientinvoices" }
-);
-
-const ClientInvoiceDetailSchema = new mongoose.Schema(
-  {
-    JobNo: Number,
-    DepartmentId: Number,
-    DepartmentName: String,
-    ReferenceNo: String,
-    InvoiceNo: Number,
-    InvoiceDate: Date,
-    CustomerName: String,
-    DueDate: Date,
-    TotalInvoice: Number,
-    TotalDueAmount: Number,
-    TotalPaidAmount: Number,
-    InvoiceStatus: String,
-    PaymentStatus: String,
+    JobNo: {
+      type: Number,
+      required: true,
+    },
+    JobType: {
+      type: String,
+      required: true,
+    },
+    DepartmentId: {
+      type: Number,
+      required: true,
+    },
+    DepartmentName: {
+      type: String,
+      required: true,
+    },
+    ReferenceNo: {
+      type: String,
+    },
+    JobDate: {
+      type: Date,
+    },
+    Customer: {
+      type: String,
+    },
+    Consignee: {
+      type: String,
+    },
+    Mbl: {
+      type: String,
+    },
+    CountryOfDeparture: {
+      type: String,
+    },
+    CountryOfDestination: {
+      type: String,
+    },
+    Pol: {
+      type: String,
+    },
+    Pod: {
+      type: String,
+    },
+    Etd: {
+      type: Date,
+    },
+    Eta: {
+      type: Date,
+    },
+    Atd: {
+      type: Date,
+    },
+    Ata: {
+      type: Date,
+    },
+    Volume: {
+      type: String, // Or Number, depending on how 'Quantities' is stored
+    },
+    Status: {
+      type: String,
+    },
+    StatusType: {
+      type: String,
+    },
+    JobStatusType: {
+      type: String,
+    },
+    UserName: {
+      type: String,
+    },
+    Salesman: {
+      type: String,
+    },
+    ArrivalDate: {
+      type: Date,
+    },
+    Notes: {
+      type: String,
+    },
+    Vessel: {
+      type: String,
+    },
+    TotalInvoices: {
+      type: Number,
+    },
+    TotalCosts: {
+      type: Number,
+    },
+    TotalProfit: {
+      type: Number,
+    },
+    Invoices: [InvoiceSchema], // Array of nested InvoiceSchema
   },
   { timestamps: true, collection: "clientinvoices" }
 );
 
 const ClientInvoice = mongoose.model("ClientInvoice", ClientInvoiceSchema);
-const ClientInvoiceDetail = mongoose.model("ClientInvoiceDetail", ClientInvoiceDetailSchema);
 
-export default { ClientInvoice, ClientInvoiceDetail };
+export default ClientInvoice;
