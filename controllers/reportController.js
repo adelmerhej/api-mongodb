@@ -188,7 +188,7 @@ export const emptyContainerReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-    
+
     // Query total count
     const totalCount = await emptyContainerModel.countDocuments(filter);
 
@@ -219,113 +219,112 @@ export const emptyContainerReport = async (req, res) => {
   }
 };
 
-export const clientInvoiceReport = async (req, res) => {
-  try {
-    const {
-      jobStatusType,
-      sortBy,
-      sortOrder,
-      page,
-      limit,
-      fullPaid,
-      statusType,
-      departmentId,
-      jobType,
-    } = req.query;
+// export const clientInvoiceReport = async (req, res) => {
+//   try {
+//     const {
+//       jobStatusType,
+//       sortBy,
+//       sortOrder,
+//       page,
+//       limit,
+//       fullPaid,
+//       statusType,
+//       departmentId,
+//       jobType,
+//     } = req.query;
 
-    let filter = {};
+//     let filter = {};
 
-    // Apply filters based on query parameters
-    if (fullPaid === "true") {
-      filter.FullPaid = true;
-    } else if (fullPaid === "false") {
-      filter.FullPaid = false;
-    }
+//     // Apply filters based on query parameters
+//     if (fullPaid === "true") {
+//       filter.FullPaid = true;
+//     } else if (fullPaid === "false") {
+//       filter.FullPaid = false;
+//     }
 
-if (jobStatusType) {
-  filter.JobStatusType = jobStatusType;
-}
+// if (jobStatusType) {
+//   filter.JobStatusType = jobStatusType;
+// }
 
-if (statusType === "Invoices") {
-  filter = {
-    ...filter,
-    $or: [
-      { "Invoices.InvoiceNo": { $ne: 0 } },
-      { "Invoices.InvoiceNo": { $exists: false } }
-    ]
-  };
-} else if (statusType === "Drafts") {
-  filter = {
-    ...filter,
-    $or: [
-      { "Invoices.InvoiceNo": 0 },
-      { "Invoices.InvoiceNo": { $exists: false } }
-    ]
-  };
-}
+// if (statusType === "Invoices") {
+//   filter = {
+//     ...filter,
+//     $or: [
+//       { "Invoices.InvoiceNo": { $ne: 0 } },
+//       { "Invoices.InvoiceNo": { $exists: false } }
+//     ]
+//   };
+// } else if (statusType === "Drafts") {
+//   filter = {
+//     ...filter,
+//     $or: [
+//       { "Invoices.InvoiceNo": 0 },
+//       { "Invoices.InvoiceNo": { $exists: false } }
+//     ]
+//   };
+// }
 
-if (departmentId) {
-  filter.DepartmentId = departmentId;
-}
-if (jobType) {
-  filter.JobType = jobType;
-}
-    if (jobType) {
-      filter.JobType = jobType;
-    }
+// if (departmentId) {
+//   filter.DepartmentId = departmentId;
+// }
+// if (jobType) {
+//   filter.JobType = jobType;
+// }
+//     if (jobType) {
+//       filter.JobType = jobType;
+//     }
 
-    // Create sort options
-    const sortOptions = {};
-    if (sortBy) {
-      sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
-    } else {
-      // Default sort by creation date, newest first
-      sortOptions.createdAt = -1;
-    }
+//     // Create sort options
+//     const sortOptions = {};
+//     if (sortBy) {
+//       sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
+//     } else {
+//       // Default sort by creation date, newest first
+//       sortOptions.createdAt = -1;
+//     }
 
-    // Query total count
-    const totalCount = await clientInvoiceModel.ClientInvoice.countDocuments(filter);
+//     // Query total count
+//     const totalCount = await clientInvoiceModel.ClientInvoice.countDocuments(filter);
 
-    // Query with filter and sort, but no pagination to return all records
-    const clientInvoices = await clientInvoiceModel.ClientInvoice
-      .find(filter)
-      .sort(sortOptions);
+//     // Query with filter and sort, but no pagination to return all records
+//     const clientInvoices = await clientInvoiceModel.ClientInvoice
+//       .find(filter)
+//       .sort(sortOptions);
 
-    // Calculate total profit by summing the TotalCosts field from all records
-    const sumOfTotalProfit = clientInvoices.reduce((sum, job) => {
-      // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return (
-        sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
-      );
-    }, 0);
+//     // Calculate total profit by summing the TotalCosts field from all records
+//     const sumOfTotalProfit = clientInvoices.reduce((sum, job) => {
+//       // Add the TotalProfit value if it exists and is a number, otherwise add 0
+//       return (
+//         sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
+//       );
+//     }, 0);
 
-    const sumOfTotalInvoices = clientInvoices.reduce((sum, job) => {
-      // Add the TotalProfit value if it exists and is a number, otherwise add 0
-      return (
-        sum +
-        (job.TotalInvoices && !isNaN(job.TotalInvoices) ? job.TotalInvoices : 0)
-      );
-    }, 0);
+//     const sumOfTotalInvoices = clientInvoices.reduce((sum, job) => {
+//       // Add the TotalProfit value if it exists and is a number, otherwise add 0
+//       return (
+//         sum +
+//         (job.TotalInvoices && !isNaN(job.TotalInvoices) ? job.TotalInvoices : 0)
+//       );
+//     }, 0);
 
-    // Return response with all records
-    res.status(200).json({
-      success: true,
-      count: clientInvoices.length,
-      total: totalCount,
-      data: clientInvoices,
-      sumOfTotalProfit: sumOfTotalProfit,
-      sumOfTotalInvoices: sumOfTotalInvoices,
-    });
-  } catch (error) {
-    console.error("Error fetching Client Invoices:", error);
-    res.status(500).json({ success: false, error: "Internal Server Error" });
-  }
-};
+//     // Return response with all records
+//     res.status(200).json({
+//       success: true,
+//       count: clientInvoices.length,
+//       total: totalCount,
+//       data: clientInvoices,
+//       sumOfTotalProfit: sumOfTotalProfit,
+//       sumOfTotalInvoices: sumOfTotalInvoices,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching Client Invoices:", error);
+//     res.status(500).json({ success: false, error: "Internal Server Error" });
+//   }
+// };
 
 export const invoiceClientReport = async (req, res) => {
   try {
     const {
-      jobStatusType,
       sortBy,
       sortOrder,
       page,
@@ -338,9 +337,11 @@ export const invoiceClientReport = async (req, res) => {
     let filter = {};
 
     // Apply filters based on query parameters
-    if (jobStatusType) {
-      filter.JobStatusType = jobStatusType;
-    }
+    // if (fullPaid === "true") {
+    //   filter.FullPaid = true;
+    // } else if (fullPaid === "false") {
+    //   filter.FullPaid = false;
+    // }
 
     if (statusType === "Invoices") {
       filter = {
