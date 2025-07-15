@@ -181,6 +181,8 @@ export const emptyContainerReport = async (req, res) => {
     }
 
     // Create sort options
+    console.log("Sort by:", sortBy);
+    console.log("Sort order:", sortOrder);
     const sortOptions = {};
     if (sortBy) {
       sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
@@ -188,6 +190,7 @@ export const emptyContainerReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
+    console.log("Sort options:", sortOptions);
 
     // Query total count
     const totalCount = await emptyContainerModel.countDocuments(filter);
