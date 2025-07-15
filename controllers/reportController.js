@@ -181,8 +181,6 @@ export const emptyContainerReport = async (req, res) => {
     }
 
     // Create sort options
-    console.log("Sort by:", sortBy);
-    console.log("Sort order:", sortOrder);
     const sortOptions = {};
     if (sortBy) {
       sortOptions[sortBy] = sortOrder === "desc" ? -1 : 1;
@@ -190,8 +188,7 @@ export const emptyContainerReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-    console.log("Sort options:", sortOptions);
-
+    
     // Query total count
     const totalCount = await emptyContainerModel.countDocuments(filter);
 
@@ -245,19 +242,34 @@ export const clientInvoiceReport = async (req, res) => {
       filter.FullPaid = false;
     }
 
-    if (jobStatusType) {
-      filter.JobStatusType = jobStatusType;
-    }
+if (jobStatusType) {
+  filter.JobStatusType = jobStatusType;
+}
 
-    if (statusType === "Invoices") {
-      filter.InvoiceNo !== "0";
-    } else if (statusType === "Drafts") {
-      filter.InvoiceNo = "0";
-    }
+if (statusType === "Invoices") {
+  filter = {
+    ...filter,
+    $or: [
+      { "Invoices.InvoiceNo": { $ne: 0 } },
+      { "Invoices.InvoiceNo": { $exists: false } }
+    ]
+  };
+} else if (statusType === "Drafts") {
+  filter = {
+    ...filter,
+    $or: [
+      { "Invoices.InvoiceNo": 0 },
+      { "Invoices.InvoiceNo": { $exists: false } }
+    ]
+  };
+}
 
-    if (departmentId) {
-      filter.DepartmentId = departmentId;
-    }
+if (departmentId) {
+  filter.DepartmentId = departmentId;
+}
+if (jobType) {
+  filter.JobType = jobType;
+}
     if (jobType) {
       filter.JobType = jobType;
     }
@@ -331,9 +343,21 @@ export const invoiceClientReport = async (req, res) => {
     }
 
     if (statusType === "Invoices") {
-      filter.Invoices = { $exists: true, $ne: [] }; // Has invoices
+      filter = {
+        ...filter,
+        $or: [
+          { "Invoices.InvoiceNo": { $ne: 0 } },
+          { "Invoices.InvoiceNo": { $exists: false } }
+        ]
+      };
     } else if (statusType === "Drafts") {
-      filter.Invoices = { $exists: true, $eq: [] }; // No invoices (drafts)
+      filter = {
+        ...filter,
+        $or: [
+          { "Invoices.InvoiceNo": 0 },
+          { "Invoices.InvoiceNo": { $exists: false } }
+        ]
+      };
     }
 
     if (departmentId) {
