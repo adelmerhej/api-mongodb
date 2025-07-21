@@ -332,6 +332,7 @@ export const invoiceClientReport = async (req, res) => {
       statusType,
       departmentId,
       jobType,
+      jobStatusType,
     } = req.query;
 
     let filter = {};
@@ -369,6 +370,10 @@ export const invoiceClientReport = async (req, res) => {
       filter.JobType = jobType;
     }
 
+    if(jobStatusType){
+      filter.JobStatusType = jobStatusType;
+    }
+    
     // Create sort options
     const sortOptions = {};
     if (sortBy) {
@@ -377,9 +382,12 @@ export const invoiceClientReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-
+    console.log(filter);
+    
     // Query total count
     const totalCount = await clientInvoiceModel.countDocuments(filter);
+
+    console.log(totalCount);
 
     // Query with filter and sort, but no pagination to return all records
     const clientInvoices = await clientInvoiceModel
