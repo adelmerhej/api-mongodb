@@ -17,12 +17,10 @@ const procedures = [
 export const totalProfitReport = async (req, res) => {
   try {
     const {
-      status,
       sortBy,
       sortOrder,
       page,
       limit,
-      fullPaid,
       statusType,
       departmentId,
       jobType,
