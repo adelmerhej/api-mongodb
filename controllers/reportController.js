@@ -30,8 +30,8 @@ export const totalProfitReport = async (req, res) => {
 
     let filter = {};
 
-    if (status) {
-      filter.StatusType = status;
+    if (statusType) {
+      filter.StatusType = statusType;
     }
 
     // Create sort options
@@ -382,12 +382,9 @@ export const invoiceClientReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
-    console.log(filter);
     
     // Query total count
     const totalCount = await clientInvoiceModel.countDocuments(filter);
-
-    console.log(totalCount);
 
     // Query with filter and sort, but no pagination to return all records
     const clientInvoices = await clientInvoiceModel
