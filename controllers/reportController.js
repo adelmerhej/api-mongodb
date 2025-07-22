@@ -577,9 +577,7 @@ export const ongoingJobsReport = async (req, res) => {
 
     // Query with filter and sort, but no pagination to return all records
     const ongoingJobs = await ongoingJobModel.find(filter).sort(sortOptions);
-
-    console.log("Data: ", ongoingJobs);
-    
+   
     const totalProfit = ongoingJobs.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
       return (
