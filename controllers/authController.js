@@ -19,12 +19,15 @@ const generateToken = (id) => {
 
 //Register user
 export const registerUser = async (req, res) => {
-  const { fullName, email, password, profileImageUrl, adminInvitetoken } =
+  const { username, email, password, fullName, profilePicture, adminInvitetoken,
+    twoFactorEnabled, twoFactorSecret, resetToken, resetTokenExpiry, 
+    loginAttempts, lockoutExpiry
+   } =
     req.body;
 
   //Validation: check for missing fields
-  if (!fullName || !email || !password) {
-    return res.status(400).json({ message: "All fields are required." });
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "Username, email or password are required." });
   }
 
   try {
@@ -34,7 +37,7 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Email already in use." });
     }
 
-    let role = "client";
+    let role = "customer";
     //Check if admin invite token is valid
     //If yes, set role to admin
     //If no, set role to user
@@ -59,20 +62,28 @@ export const registerUser = async (req, res) => {
 
     //Create the user
     const user = await User.create({
-      fullName,
+      username,
       email,
       password: hashedPassword,
-      profileImageUrl,
+      fullName,
+      profilePicture,
+      twoFactorEnabled,
+      twoFactorSecret,
+      resetToken,
+      resetTokenExpiry,
       role,
+      loginAttempts,
+      lockoutExpiry,
     });
 
     res.status(201).json({
       _id: user._id,
-      fullName: user.fullName,
+      username: user.username,
       email: user.email,
-      role: user.role,
-      profileImageUrl: user.profileImageUrl,
+      fullName: user.fullName,
+      profilePicture: user.profilePicture,
       token: generateToken(user._id),
+      role: user.role,
     });
   } catch (err) {
     res
@@ -140,10 +151,11 @@ export const loginUser = async (req, res) => {
     //Return user data with jwt
     res.json({
       _id: user._id,
+      username: user.username,
       fullName: user.fullName,
       email: user.email,
       role: user.role,
-      profileImageUrl: user.profileImageUrl,
+      profilePicture: user.profilePicture,
       token: accessToken,
     });
   } catch (err) {
@@ -214,8 +226,10 @@ export const updateUserInfo = async (req, res) => {
       res.status(401).json({ message: "User not found." });
     }
 
+    user.username = req.body.username || user.username;
     user.fullName = req.body.fullName || user.fullName;
     user.email = req.body.email || user.email;
+    user.profilePicture = req.body.profilePicture || user.profilePicture;
 
     if (req.body.password) {
       const salt = await bcrypt.genSalt(12);
@@ -226,6 +240,7 @@ export const updateUserInfo = async (req, res) => {
 
     res.json({
       _id: updateUser._id,
+      userName: updateUser.username,
       fullName: updateUser.fullName,
       email: updateUser.email,
       role: updateUser.role,

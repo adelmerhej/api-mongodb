@@ -2,13 +2,18 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
-  fullName: { type: String, required: true },
+  username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  fullName: { type: String, default: "" },
   twoFactorEnabled: { type: Boolean, default: false },
   twoFactorSecret: { type: String },
-  profileImageUrl: { type: String, default: null },
-  role: { type: String, enum: ["admin", "user", "client"], default: "user" }, //Role based access
+  resetToken: { type: String },
+  resetTokenExpiry: { type: Date },
+  profilePicture: { type: String, default: null },
+  role: { type: String, enum: ["admin", "user", "customer"], default: "user" }, 
+  loginAttempts: { type: Number, default: 0 },
+  lockoutExpiry: { type: Date },
 }, { timestamps: true });
 
 // Hash password before saving

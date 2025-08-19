@@ -48,6 +48,7 @@ app.use("/api/v1/clients/on-water", onWaterRouter);
 app.use("/api/v1/clients/under-clearance", underClearanceRouter);
 app.use("/api/v1/clients/invoice-status", invoiceStatusRouter);
 
+
 //Sync Routes
 app.use("/api/v1/sync", syncRouter);
 

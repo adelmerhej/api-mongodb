@@ -7,10 +7,7 @@ export const tobeLoadedReport = async (req, res) => {
       status,
       sortBy,
       sortOrder,
-      page,
-      limit,
       fullPaid,
-      statusType,
       jobType,
     } = req.query;
 
@@ -42,6 +39,9 @@ export const tobeLoadedReport = async (req, res) => {
       // Default sort by creation date, newest first
       sortOptions.createdAt = -1;
     }
+
+    console.log("Filter:", filter);
+    console.log("Sort Options:", sortOptions);
 
     // Query total count
     const totalCount = await tobeLoadedModel.countDocuments(filter);

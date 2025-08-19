@@ -19,11 +19,12 @@ export const protect = async (req, res, next) => {
   }
 };
 
-//Middleware for admin only access
+//Middleware for role-based access control
 export const adminOnly = (req, res, next) => {
-  if (req.user && req.user.role === "admin") {
+  const allowedRoles = ['admin', 'user', 'customer'];
+  if (req.user && allowedRoles.includes(req.user.role)) {
     next();
   } else {
-    res.status(403).json({ message: "Access denied, admin only" });
+    res.status(403).json({ message: "Access denied, authorized users only" });
   }
 };
