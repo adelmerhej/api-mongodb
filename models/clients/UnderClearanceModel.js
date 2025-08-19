@@ -1,0 +1,45 @@
+import mongoose from "mongoose";
+
+const UnderClearanceSchema = new mongoose.Schema(
+  {
+    OrderNo: String,
+    JobNo: String,
+    ReferenceNo: String,
+    JobDate: Date,
+    DepartmentId: Number,
+    DepartmentName: String,
+    CustomerName: String,
+    ContainerToCnee: String,
+    dtCntrToCnee: Date,
+    EmptyContainer: String,
+    dtEmptyCntr: Date,
+    UserName: String,
+    SalesName: String,
+    Mbl: String,
+    ContainerNo: String,
+    Atd: Date,
+    Ata: Date,
+    Status: String,
+    blstatus: String,
+    Notes: String,
+    TejrimDate: Date,
+    CarrierName: String,
+    ArrivalDays: Number,
+    TejrimDays: Number,
+    DiffCntrToCnee: Number,
+    Departure: String,
+    Destination: String,
+    FullPaid: Boolean,
+    PaidDO: Boolean,
+    PaidDate: Date,
+    MissingDocuments: Boolean,
+    MissingDocumentsDate: Date,
+    TotalInvoices: Number,
+    TotalCosts: Number,
+    TotalProfit: Number,
+    StatusType: String,
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("UnderClearance", UnderClearanceSchema);
