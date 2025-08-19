@@ -1,6 +1,6 @@
 import express from "express";
 import { adminOnly, protect } from "../../middlewares/authMiddleware.js";
-import { invoiceStatusReport } from "../../controllers/Clients/invoiceStatusReportController.js";
+import { invoiceStatusReport } from "../../controllers/Clients/InvoiceStatusReportController.js";
 
 const invoiceStatusRouter = express.Router();
 
