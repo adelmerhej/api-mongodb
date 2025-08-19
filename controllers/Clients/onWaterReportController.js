@@ -1,4 +1,4 @@
-import onWaterModel from "../../models/clients/onWaterModel.js";
+import onWaterModel from "../../models/clients/OnWaterModel.js";
 
 export const onWaterReport = async (req, res) => {
   try {
