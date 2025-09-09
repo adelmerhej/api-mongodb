@@ -40,9 +40,6 @@ export const tobeLoadedReport = async (req, res) => {
       sortOptions.createdAt = -1;
     }
 
-    console.log("Filter:", filter);
-    console.log("Sort Options:", sortOptions);
-
     // Query total count
     const totalCount = await tobeLoadedModel.countDocuments(filter);
 
