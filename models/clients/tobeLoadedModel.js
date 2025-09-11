@@ -13,6 +13,7 @@ const TobeLoadedSchema = new mongoose.Schema(
     DepartmentId: Number,
     UserName: String,
     CustomerName: String,
+    CustomerId: Number,
     PendingInvoices: Number,
     PendingCosts: Number,
     Tejrim: String,
