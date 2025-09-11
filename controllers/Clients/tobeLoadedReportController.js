@@ -14,6 +14,8 @@ export const tobeLoadedReport = async (req, res) => {
 
     let filter = {};
 
+    console.log("userId", userId);
+
     if (userId === undefined || userId === null || userId === "0" || userId === 0 || userId === "null") {
       return res.status(200).json({
         success: true,
