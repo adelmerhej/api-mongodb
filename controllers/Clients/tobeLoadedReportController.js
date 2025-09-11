@@ -17,8 +17,8 @@ export const tobeLoadedReport = async (req, res) => {
     console.log("userId", userId);
 
     if (userId === undefined || userId === null || userId === "0" || userId === 0 || userId === "null") {
-      return res.status(200).json({
-        success: true,
+      return res.status(401).json({
+        success: false,
         count: 0,
         total: 0,
         data: [],
@@ -29,7 +29,7 @@ export const tobeLoadedReport = async (req, res) => {
     if (userId) {
       filter.CustomerId = userId;
     }
-
+    
     if (departmentId) {
       filter.DepartmentId = departmentId;
     }
