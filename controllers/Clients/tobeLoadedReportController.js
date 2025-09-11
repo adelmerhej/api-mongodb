@@ -9,17 +9,23 @@ export const tobeLoadedReport = async (req, res) => {
       sortOrder,
       fullPaid,
       jobType,
-      userName,
+      userId,
     } = req.query;
-
-    if (!userName || userName.trim() === "") {
-      return res.status(200).json(null);
-    }
 
     let filter = {};
 
-    if (userName) {
-      filter.CustomerName = userName;
+    if (userId === undefined || userId === null || userId === "0" || userId === 0 || userId === "null") {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        total: 0,
+        data: [],
+        totalProfit: 0,
+      });
+    }
+
+    if (userId) {
+      filter.CustomerId = userId;
     }
 
     if (departmentId) {

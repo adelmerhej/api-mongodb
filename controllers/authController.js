@@ -74,6 +74,7 @@ export const registerUser = async (req, res) => {
       role,
       loginAttempts,
       lockoutExpiry,
+      userId: 0,
     });
 
     res.status(201).json({
@@ -84,6 +85,7 @@ export const registerUser = async (req, res) => {
       profilePicture: user.profilePicture,
       token: generateToken(user._id),
       role: user.role,
+      userId: user.userId,
     });
   } catch (err) {
     res
