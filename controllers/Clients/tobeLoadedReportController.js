@@ -9,9 +9,14 @@ export const tobeLoadedReport = async (req, res) => {
       sortOrder,
       fullPaid,
       jobType,
+      userId,
     } = req.query;
 
     let filter = {};
+
+    if (userId) {
+      filter.CustomerName = userName;
+    }
 
     if (departmentId) {
       filter.DepartmentId = departmentId;
