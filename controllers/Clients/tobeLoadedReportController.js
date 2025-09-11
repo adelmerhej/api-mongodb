@@ -9,12 +9,16 @@ export const tobeLoadedReport = async (req, res) => {
       sortOrder,
       fullPaid,
       jobType,
-      userId,
+      userName,
     } = req.query;
+
+    if (!userName || userName.trim() === "") {
+      return res.status(200).json(null);
+    }
 
     let filter = {};
 
-    if (userId) {
+    if (userName) {
       filter.CustomerName = userName;
     }
 
