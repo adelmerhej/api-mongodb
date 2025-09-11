@@ -14,15 +14,16 @@ export const tobeLoadedReport = async (req, res) => {
 
     let filter = {};
 
-    if (userId == null || userId === 0 || userId === "0") {
-      return res.status(400).json({
-        success: false,
-        message: "User ID is required and must be valid",
-      });
+if (userId == null || userId === 0 || userId === "0") {
+  return res.status(400).json({
+    success: false,
+    message: "User ID is required and must be valid",
+  });
+}
+
+    if (userId) {
+      filter.CustomerId = userId;
     }
-    // if (userId) {
-    //   filter.CustomerId = userId;
-    // }
     
     if (departmentId) {
       filter.DepartmentId = departmentId;
