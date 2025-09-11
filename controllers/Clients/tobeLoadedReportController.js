@@ -15,17 +15,12 @@ export const tobeLoadedReport = async (req, res) => {
     let filter = {};
 
     console.log("userId", userId);
-
-    if (userId === undefined || userId === null || userId === "0" || userId === 0 || userId === "null") {
-      return res.status(401).json({
+    if (userId == null || userId === 0 || userId === "0") {
+      return res.status(400).json({
         success: false,
-        count: 0,
-        total: 0,
-        data: [],
-        totalProfit: 0,
+        message: "User ID is required and must be valid",
       });
     }
-
     if (userId) {
       filter.CustomerId = userId;
     }
