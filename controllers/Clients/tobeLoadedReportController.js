@@ -23,9 +23,9 @@ export const tobeLoadedReport = async (req, res) => {
     //   });
     // }
 
-    // if (userId) {
-    //   filter.CustomerId = userId;
-    // }
+    if (userId) {
+      filter.CustomerId = userId;
+    }
     
     if (departmentId) {
       filter.DepartmentId = departmentId;
