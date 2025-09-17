@@ -24,6 +24,7 @@ export const clientProtect = (req, res, next) => {
   try {
     // Accept session token from common locations
     const token =
+      req.headers["x-session"] ||
       req.headers["x-session-token"] ||
       req.headers["sessiontoken"] ||
       req.headers["session-token"] ||
