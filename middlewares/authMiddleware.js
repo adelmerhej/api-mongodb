@@ -56,6 +56,18 @@ export const clientProtect = (req, res, next) => {
   }
 };
 
+// Authorize access for client session flows (or authenticated users as fallback)
+export const clientAccess = (req, res, next) => {
+  const allowedRoles = ['admin', 'user', 'customer'];
+  if (req.clientSession) {
+    return next();
+  }
+  if (req.user && allowedRoles.includes(req.user.role)) {
+    return next();
+  }
+  return res.status(403).json({ message: "Access denied, client session required" });
+};
+
 //Middleware for role-based access control
 export const adminOnly = (req, res, next) => {
   const allowedRoles = ['admin', 'user', 'customer'];
