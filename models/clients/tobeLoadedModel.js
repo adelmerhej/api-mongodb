@@ -40,7 +40,7 @@ const TobeLoadedSchema = new mongoose.Schema(
     DepartmentName: String,
     SeaFreight: Number,
     TotalProfit: Number,
-    AlreadyLate: Boolean
+    AlreadyLate: Boolean,
   },
   { timestamps: true, collection: "tobeLoaded" }
 );

@@ -38,6 +38,12 @@ const UnderClearanceSchema = new mongoose.Schema(
     TotalCosts: Number,
     TotalProfit: Number,
     StatusType: String,
+    JobType: String,
+    CustomerId: Number,
+    ConsigneeId: Number,
+    UserId: Number,
+    SalesId: Number,
+    OperatingUserId: Number
   },
   { timestamps: true }
 );

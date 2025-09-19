@@ -7,11 +7,9 @@ export const underClearanceReport = async (req, res) => {
       status,
       sortBy,
       sortOrder,
-      page,
-      limit,
       fullPaid,
-      statusType,
       jobType,
+      userId,
     } = req.query;
 
     let filter = {};
