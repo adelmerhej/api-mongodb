@@ -1,9 +1,9 @@
 import express from "express";
-import { adminOnly, protect } from "../../middlewares/authMiddleware.js";
-import { onWaterReport } from "../../controllers/Clients/onWaterReportController.js";
+import { protect, adminOnly } from "../../middlewares/authMiddleware.js";
+import { onWaterSqlReport } from "../../controllers/Clients/onWaterSqlReportController.js";
 
 const onWaterRouter = express.Router();
 
-onWaterRouter.get("/", protect, adminOnly, onWaterReport);
+onWaterRouter.get("/", protect, adminOnly, onWaterSqlReport);
 
 export default onWaterRouter;

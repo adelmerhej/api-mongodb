@@ -38,6 +38,14 @@ const InvoiceSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  CustomerId: {
+    type: Number,
+    required: true,
+  },
+  ConsigneeId: {
+    type: Number,
+    required: true,
+  },
 });
 
 const ClientInvoiceSchema = new mongoose.Schema(
@@ -133,11 +141,22 @@ const ClientInvoiceSchema = new mongoose.Schema(
     TotalProfit: {
       type: Number,
     },
+    CustomerId: {
+      type: Number,
+      required: true,
+    },
+    ConsigneeId: {
+      type: Number,
+      required: true,
+    },
     Invoices: [InvoiceSchema], // Array of nested InvoiceSchema
   },
   { timestamps: true, collection: "clientinvoicereports" }
 );
 
-const ClientInvoiceReportModel = mongoose.model("ClientInvoiceReport", ClientInvoiceSchema);
+const ClientInvoiceReportModel = mongoose.model(
+  "ClientInvoiceReport",
+  ClientInvoiceSchema
+);
 
 export { ClientInvoiceReportModel };

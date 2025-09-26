@@ -1,7 +1,13 @@
 import onWaterModel from "../../models/clients/OnWaterModel.js";
+import { runSyncOnWaterJobs } from "../admin/reports/syncOnWaterJobs.js";
 
 export const onWaterReport = async (req, res) => {
    try {
+    
+    console.log("Running onWater sync before fetching SQL report");
+    //await runSyncOnWaterJobs();
+    console.log("onWater sync completed");
+
     const {
       departmentId,
       status,
@@ -13,8 +19,6 @@ export const onWaterReport = async (req, res) => {
     } = req.query;
 
     let filter = {};
-
-    console.log("userId", userId);
 
     if (userId == null || userId === 0 || userId === "0") {
       return res.status(400).json({

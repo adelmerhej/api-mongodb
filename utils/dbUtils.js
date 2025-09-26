@@ -82,7 +82,7 @@ async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) 
       return;
     }
 
-    // Validate MongoDB connection
+  // Validate MongoDB connection
     if (!mongoClient) {
       throw new Error('MongoClient is not initialized');
     }
@@ -139,13 +139,20 @@ async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) 
       }
     }
     
+    // Normalize data: only keep plain objects as documents
+    const docs = data.filter((item) => item !== null && typeof item === 'object' && !Array.isArray(item));
+    if (docs.length === 0) {
+      console.warn(`No valid document objects to insert for collection ${collectionName}. Original items: ${data.length}`);
+      return;
+    }
+
     // Insert new documents with retry
     let insertSuccess = false;
     retryCount = 0;
     
     while (!insertSuccess && retryCount < maxRetries) {
       try {
-        await collection.insertMany(data);
+        await collection.insertMany(docs);
         //console.log(`Inserted documents into collection ${collectionName}:`, {
         //  insertedCount: insertResult.insertedCount,
         //  acknowledged: insertResult.acknowledged

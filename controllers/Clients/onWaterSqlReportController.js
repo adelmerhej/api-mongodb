@@ -1,7 +1,11 @@
-import underClearanceModel from "../../models/clients/UnderClearanceModel.js";
+import onWaterModel from "../../models/clients/OnWaterModel.js";
+import { runSyncOnWaterJobs } from "../admin/reports/syncOnWaterJobs.js";
 
-export const underClearanceReport = async (req, res) => {
-  try {
+export const onWaterSqlReport = async (req, res) => {
+   try {
+    
+    await runSyncOnWaterJobs();
+
     const {
       departmentId,
       status,
@@ -17,14 +21,14 @@ export const underClearanceReport = async (req, res) => {
     if (userId == null || userId === 0 || userId === "0") {
       return res.status(400).json({
         success: false,
-        message: "User ID is required and must be valid",
+        message: "User Id is required and must be valid",
       });
     }
 
     if (userId) {
       filter.CustomerId = userId;
     }
-
+    
     if (departmentId) {
       filter.DepartmentId = departmentId;
     }
@@ -53,15 +57,15 @@ export const underClearanceReport = async (req, res) => {
     }
 
     // Query total count
-    const totalCount = await underClearanceModel.countDocuments(filter);
+    const totalCount = await onWaterModel.countDocuments(filter);
 
     // Query with filter and sort, but no pagination to return all records
-    const underClearances = await underClearanceModel
+    const onWater = await onWaterModel    
       .find(filter)
       .sort(sortOptions);
 
     // Calculate total profit by summing the TotalProfit field from all records
-    const totalProfit = underClearances.reduce((sum, job) => {
+    const totalProfit = onWater.reduce((sum, job) => {
       // Add the TotalProfit value if it exists and is a number, otherwise add 0
       return (
         sum + (job.TotalProfit && !isNaN(job.TotalProfit) ? job.TotalProfit : 0)
@@ -71,13 +75,13 @@ export const underClearanceReport = async (req, res) => {
     // Return response with all records
     res.status(200).json({
       success: true,
-      count: underClearances.length,
+      count: onWater.length,    
       total: totalCount,
-      data: underClearances,
+      data: onWater,
       totalProfit: totalProfit,
     });
   } catch (error) {
-    console.error("Error fetching under clearance:", error);
+    console.error("Error fetching on water:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
