@@ -10,7 +10,8 @@ import { syncOngoingJobs }
     from "../controllers/admin/reports/syncOngoingJobs.js";
 import { syncTotalProfit } 
     from "../controllers/admin/reports/syncTotalProfit.js";
-
+import { syncTobeLoadedJobs } 
+    from "../controllers/Clients/sync/syncTobeLoaded.js";
 const syncRouter = express.Router();
 
 syncRouter.post("/sync-client-invoices", protect, adminOnly, syncClientInvocies);
@@ -18,6 +19,9 @@ syncRouter.post("/sync-empty-containers", protect, adminOnly, syncEmptyContainer
 syncRouter.post("/sync-job-status", protect, adminOnly, syncJobStatus);
 syncRouter.post("/sync-ongoing-jobs", protect, adminOnly, syncOngoingJobs);
 syncRouter.post("/sync-total-profit", protect, adminOnly, syncTotalProfit);
+
+//client routes
+syncRouter.post("/client/sync-be-loaded", protect, adminOnly, syncTobeLoadedJobs);
 
 
 export default syncRouter;

@@ -523,7 +523,6 @@ export const invoiceDetailClientReport = async (req, res) => {
   }
 };
 
-
 export const ongoingJobsReport = async (req, res) => {
   try {
     const {
