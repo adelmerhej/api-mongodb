@@ -1,7 +1,7 @@
 import { executeStoredProc, saveToMongoDB, updateJobStatuses } from "../../../utils/dbUtils.js";
 
 const procedures = [
-  { name: '__cli_TobeLoadedReport_to_JSON', collection: 'tobeLoaded' },
+  { name: '__cli_TobeLoadedReport_to_JSON', collection: 'tobeloaded' },
 ];
 
 export const syncTobeLoadedJobs = async (req, res) => {
