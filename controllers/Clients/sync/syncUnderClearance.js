@@ -1,9 +1,9 @@
-// controllers/Clients/sync/syncTobeLoaded.js
+// controllers/Clients/sync/syncUnderClearance.js
 
 import { executeStoredProc as defaultExecuteStoredProc, saveToMongoDB as defaultSaveToMongoDB } from "../../../utils/dbUtils.js";
 
 const procedures = [
-  { name: '__cli_ToBeLoadedReport_to_JSON', collection: 'tobeLoaded' },
+  { name: '__cli_UnderClearanceReport_to_JSON', collection: 'underClearance' },
 ];
 
 export const createSyncTobeLoadedJobs = ({ executeStoredProc = defaultExecuteStoredProc, saveToMongoDB = defaultSaveToMongoDB } = {}) => {
@@ -12,9 +12,9 @@ export const createSyncTobeLoadedJobs = ({ executeStoredProc = defaultExecuteSto
       console.log("Syncing...", new Date().toLocaleTimeString());
       const results = [];
       
-      const proc = procedures.find((p) => p.name === "__cli_ToBeLoadedReport_to_JSON");
+      const proc = procedures.find((p) => p.name === "__cli_UnderClearanceReport_to_JSON");
       if (!proc) {
-        throw new Error("To Be Loaded Jobs procedure not found");
+        throw new Error("Under Clearance Jobs procedure not found");
       }
 
       const data = await executeStoredProc(proc.name);
@@ -24,31 +24,31 @@ export const createSyncTobeLoadedJobs = ({ executeStoredProc = defaultExecuteSto
       results.push({
         procedure: proc.name,
         status: "success",
-        message: "To Be Loaded Jobs synced successfully",
+        message: "Under Clearance Jobs synced successfully",
       });
 
       res.status(200).json({
         success: true,
-        message: "To Be Loaded Jobs synced successfully",
+        message: "Under Clearance Jobs synced successfully",
         results,
       });
     } catch (error) {
-      console.error("Error syncing To Be Loaded Jobs:", error);
+      console.error("Error syncing Under Clearance Jobs:", error);
       res.status(500).json({
         success: false,
         error: error instanceof Error ? error.message : String(error),
-        message: "Failed to sync To Be Loaded Jobs",
+        message: "Failed to sync Under Clearance Jobs",
       });
     }
   };
 };
 
-export const syncTobeLoadedJobs = createSyncTobeLoadedJobs();
+export const syncUnderClearanceJobs = createSyncUnderClearanceJobs();
 
-export async function runSyncTobeLoadedJobs({ executeStoredProc = defaultExecuteStoredProc, saveToMongoDB = defaultSaveToMongoDB } = {}) {
-  const proc = procedures.find((p) => p.name === "__cli_ToBeLoadedReport_to_JSON");
+export async function runSyncUnderClearanceJobs({ executeStoredProc = defaultExecuteStoredProc, saveToMongoDB = defaultSaveToMongoDB } = {}) {
+  const proc = procedures.find((p) => p.name === "__cli_UnderClearanceReport_to_JSON");
   if (!proc) {
-    throw new Error("To Be Loaded Jobs procedure not found");
+    throw new Error("Under Clearance Jobs procedure not found");
   }
   const data = await executeStoredProc(proc.name);
   await saveToMongoDB(proc.collection, data, false);
