@@ -7,13 +7,12 @@ const procedures = [
 export const syncUnderClearanceJobs = async (req, res) => {
     try {
       const results = [];
-  
+      
       // Find the Under Clearance Jobs procedure from the procedures array  
       const proc = procedures.find((p) => p.name === "__cli_UnderClearanceReport_to_JSON");
       if (!proc) {
         throw new Error("Under Clearance Jobs procedure not found");
       }
-
        
       // Execute stored procedure with detailed logging
       const data = await executeStoredProc(proc.name);

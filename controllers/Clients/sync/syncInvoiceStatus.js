@@ -7,7 +7,7 @@ const procedures = [
 export const syncInvoiceStatus = async (req, res) => {
     try {
       const results = [];
-  
+      
       // Find the Invoice Status procedure from the procedures array
       const proc = procedures.find((p) => p.name === "__cli_InvoiceStatusReport_to_JSON");
       if (!proc) {

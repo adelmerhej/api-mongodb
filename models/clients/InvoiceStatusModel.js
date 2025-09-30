@@ -151,7 +151,7 @@ const ClientInvoiceSchema = new mongoose.Schema(
     },
     Invoices: [InvoiceSchema], // Array of nested InvoiceSchema
   },
-  { timestamps: true, collection: "clientinvoicereports" }
+  { timestamps: true, collection: "clientinvoices" }
 );
 
 const ClientInvoiceReportModel = mongoose.model(
