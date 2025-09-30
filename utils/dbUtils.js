@@ -4,9 +4,10 @@ const { ConnectionPool } = pkg;
 
 // SQL Server Configuration
 export const sqlConfig = {
-  user: process.env.SQL_USER || 'dbuser',
-  password: process.env.SQL_PASSWORD || 'User@Xolog#16',
+  user: process.env.SQL_USER || 'execUser',
+  password: process.env.SQL_PASSWORD || 'ZLj8n7Th8jRQ',
   server: process.env.SQL_HOST || '192.168.88.21',
+  port: process.env.SQL_PORT || 1433,
   database: process.env.SQL_DATABASE || 'XOLOGDB',
   options: {
     encrypt: false, // For Azure
@@ -18,7 +19,7 @@ export const sqlConfig = {
 
 // MongoDB Configuration
 export const mongoConfig = {
-  uri: process.env.MONGODB_URI || 'mongodb://192.168.88.22:27017',
+  uri: process.env.MONGODB_URI || 'mongodb://localhost:27017',
   dbName: process.env.MONGODB_DB || 'xologdb'
 };
 
@@ -26,7 +27,7 @@ const mongoClient = new MongoClient(mongoConfig.uri);
 const dbName = mongoConfig.dbName;
 
 // Execute SQL Stored Procedure and return JSON
-async function executeStoredProc(procedureName, params = {}) {
+async function executeStoredProc(procedureName, params = {}) { 
   // Validate SQL configuration only during runtime
   if (!process.env.SQL_USER || !process.env.SQL_PASSWORD || !process.env.SQL_HOST || !process.env.SQL_DATABASE) {
     throw new Error('Missing required SQL Server environment variables');
@@ -36,6 +37,7 @@ async function executeStoredProc(procedureName, params = {}) {
 
   try {
     pool = await new ConnectionPool(sqlConfig).connect();
+    
     const request = pool.request();
 
     // Add parameters dynamically
@@ -44,23 +46,36 @@ async function executeStoredProc(procedureName, params = {}) {
     }
 
     const result = await request.query(`EXEC ${procedureName}`);
+
+    if (!result.recordset || result.recordset.length === 0) {
+      console.warn(`⚠️  Stored procedure ${procedureName} returned empty recordset`);
+      return [];
+    }
+
     const jsonColumn = Object.keys(result.recordset[0])[0];
     const jsonResult = result.recordset[0][jsonColumn];
-
+    
     if (jsonResult === undefined || jsonResult === null) {
-      throw new Error(`Procedure ${procedureName} returned undefined or null JSON`);
+      console.warn(`⚠️  Procedure ${procedureName} returned undefined or null JSON`);
+      return [];
     }
 
     // Parse the JSON string and ensure we return an array
     try {
       const parsedResult = JSON.parse(jsonResult);
+
       // Ensure we always return an array, even if the result is a single object
-      return Array.isArray(parsedResult) ? parsedResult : [parsedResult];
+      const finalResult = Array.isArray(parsedResult) ? parsedResult : [parsedResult];
+      return finalResult;
 
     } catch (parseError) {
-      console.error(`Error parsing JSON from ${procedureName}:`, parseError);
+      console.error(`❌ Error parsing JSON from ${procedureName}:`, parseError);
+      console.error(`Raw JSON result:`, jsonResult);
       throw new Error(`Failed to parse JSON result from ${procedureName}: ${parseError}`);
     }
+  } catch (error) {
+    console.error(`❌ Error in executeStoredProc for ${procedureName}:`, error);
+    throw error;
   } finally {
     // Close the pool if it exists
     if (pool) {
@@ -71,17 +86,15 @@ async function executeStoredProc(procedureName, params = {}) {
 
 // Save JSON data to MongoDB
 async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) {
-
   try {
     // Validate data before proceeding
     if (!Array.isArray(data)) {
       throw new Error(`Expected array of documents, got: ${typeof data}`);
     }
     if (data.length === 0) {
-      console.log(`No documents to insert for collection ${collectionName}`);
       return;
     }
-
+    
   // Validate MongoDB connection
     if (!mongoClient) {
       throw new Error('MongoClient is not initialized');
@@ -140,27 +153,31 @@ async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) 
     }
     
     // Normalize data: only keep plain objects as documents
-    const docs = data.filter((item) => item !== null && typeof item === 'object' && !Array.isArray(item));
+    const docs = data.filter((item) => {
+      const isValid = item !== null && typeof item === 'object' && !Array.isArray(item);
+      if (!isValid) {
+        console.log(`❌ Filtered out invalid item: type=${typeof item}, isNull=${item === null}, isArray=${Array.isArray(item)}`);
+      }
+      return isValid;
+    });
+        
     if (docs.length === 0) {
-      console.warn(`No valid document objects to insert for collection ${collectionName}. Original items: ${data.length}`);
+      console.warn(`⚠️  No valid document objects to insert for collection ${collectionName}. Original items: ${data.length}`);
+      console.warn(`Sample of filtered data:`, data.slice(0, 3));
       return;
     }
-
+    
     // Insert new documents with retry
     let insertSuccess = false;
     retryCount = 0;
     
     while (!insertSuccess && retryCount < maxRetries) {
       try {
-        await collection.insertMany(docs);
-        //console.log(`Inserted documents into collection ${collectionName}:`, {
-        //  insertedCount: insertResult.insertedCount,
-        //  acknowledged: insertResult.acknowledged
-        //});
+        const insertResult = await collection.insertMany(docs);
         insertSuccess = true;
       } catch (insertError) {
         retryCount++;
-        console.error(`Failed to insert documents (attempt ${retryCount}/${maxRetries}):`, insertError);
+        console.error(`❌ Failed to insert documents (attempt ${retryCount}/${maxRetries}):`, insertError);
         if (retryCount >= maxRetries) {
           throw new Error(`Failed to insert documents into ${collectionName} after ${maxRetries} attempts`);
         }
@@ -175,7 +192,6 @@ async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) 
     try {
       if (mongoClient) {
         await mongoClient.close();
-        console.log(`Disconnected from MongoDB`);
       }
     } catch (disconnectError) {
       console.error('Error disconnecting from MongoDB:', disconnectError);
@@ -184,46 +200,10 @@ async function saveToMongoDB(collectionName, data, skipDeleteJobStatus = false) 
 }
 
 async function updateJobStatuses() {
-  try {
-    console.log("Updating job statuses...", new Date().toLocaleTimeString());
-    
+  try {    
     const client = await mongoClient.connect();
     const db = client.db(dbName);
     const collection = db.collection('jobstatus');
-
-    // await collection.updateMany(
-    //   {
-    //     StatusType: {
-    //       $in: [
-    //         "SI New", "SI Delivered", "SI Pending for Delivery", "SI Cancelled",
-    //         "SE New", "SE Delivered", "SE Pending for Delivery", "SE Cancelled",
-    //         "SC New", "SC Delivered", "SC Pending for Delivery", "SC Cancelled",
-    //         "AI New", "AI Delivered", "AI Pending for Delivery", "AI Cancelled",
-    //         "AE New", "AE Delivered", "AE Pending for Delivery", "AE Cancelled",
-    //         "AC New", "AC Delivered", "AC Pending for Delivery", "AC Cancelled",
-    //         "LF New", "LF Delivered", "LF Pending for Delivery", "LF Cancelled",
-    //         "WH New", "WH Delivered", "WH Pending for Delivery", "WH Cancelled"
-    //       ]
-    //     }
-    //   },
-    //   [
-    //     {
-    //       $set: {
-    //         StatusType: {
-    //           $switch: {
-    //             branches: [
-    //               { case: { $regexMatch: { input: "$StatusType", regex: /New$/ } }, then: "New" },
-    //               { case: { $regexMatch: { input: "$StatusType", regex: /Delivered$/ } }, then: "Delivered" },
-    //               { case: { $regexMatch: { input: "$StatusType", regex: /Pending for Delivery$/ } }, then: "Pending" },
-    //               { case: { $regexMatch: { input: "$StatusType", regex: /Cancelled$/ } }, then: "Cancelled" }
-    //             ],
-    //             default: "$StatusType"
-    //           }
-    //         }
-    //       }
-    //     }
-    //   ]
-    // );
 
     await collection.updateMany(
       { Ata: { $type: "string" } },
@@ -236,7 +216,6 @@ async function updateJobStatuses() {
       ]
     );
 
-    console.log("Updated job statuses", new Date().toLocaleTimeString());
   } catch (error) {
     console.error("Error updating job statuses:", error);
     throw error;
