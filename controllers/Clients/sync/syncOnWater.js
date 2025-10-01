@@ -1,7 +1,7 @@
 import { executeStoredProc, saveToMongoDB, updateJobStatuses } from "../../../utils/dbUtils.js";
 
 const procedures = [
-  { name: '__cli_OnWaterReport_to_JSON', collection: 'onwater' },
+  { name: '__cli_OnWaterReport_to_JSON', collection: 'ClientOnWater' },
 ];
 
 export const syncOnWaterJobs = async (req, res) => {

@@ -1,7 +1,7 @@
 import { executeStoredProc, saveToMongoDB, updateJobStatuses } from "../../../utils/dbUtils.js";
 
 const procedures = [
-  { name: '__cli_UnderClearanceReport_to_JSON', collection: 'underclearance' },
+  { name: '__cli_UnderClearanceReport_to_JSON', collection: 'ClientUnderClearance' },
 ];
 
 export const syncUnderClearanceJobs = async (req, res) => {
