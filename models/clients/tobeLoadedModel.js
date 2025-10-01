@@ -42,7 +42,7 @@ const TobeLoadedSchema = new mongoose.Schema(
     TotalProfit: Number,
     AlreadyLate: Boolean,
   },
-  { timestamps: true, collection: "tobeloaded" }
+  { timestamps: true, collection: "ClientTobeLoaded" }
 );
 
 export default mongoose.model("TobeLoaded", TobeLoadedSchema);

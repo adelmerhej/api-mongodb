@@ -51,7 +51,7 @@ const OnWaterSchema = new mongoose.Schema(
     CanceledJob: Boolean,
     MemberOf: String,
   },
-  { timestamps: true, collection: "onwater" }
+  { timestamps: true, collection: "ClientOnWater" }
 );
 
 export default mongoose.model("OnWater", OnWaterSchema);

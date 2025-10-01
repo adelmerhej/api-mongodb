@@ -53,7 +53,7 @@ const UnderClearanceSchema = new mongoose.Schema(
     TotalProfit: Number,
     AlreadyLate: Boolean,    
   },
-  { timestamps: true, collection: "underclearance" }
+  { timestamps: true, collection: "ClientUnderClearance" }
 );
 
 export default mongoose.model("UnderClearance", UnderClearanceSchema);

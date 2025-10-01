@@ -1,7 +1,7 @@
 import { executeStoredProc, saveToMongoDB, updateJobStatuses } from "../../../utils/dbUtils.js";
 
 const procedures = [
-  { name: '__Empty_Containers_to_JSON', collection: 'emptycontainers' },
+  { name: '__Empty_Containers_to_JSON', collection: 'ClientUnderClearance' },
 ];
 
 export const syncEmptyContainers = async (req, res) => {
