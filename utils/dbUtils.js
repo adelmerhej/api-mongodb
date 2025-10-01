@@ -19,7 +19,7 @@ export const sqlConfig = {
 
 // MongoDB Configuration
 export const mongoConfig = {
-  uri: process.env.MONGODB_URI || 'mongodb://localhost:27017',
+  uri: process.env.MONGODB_URI || 'mongodb://192.168.88.22:27017',
   dbName: process.env.MONGODB_DB || 'xologdb'
 };
 
