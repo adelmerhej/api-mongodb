@@ -39,7 +39,7 @@ const EmptyContainerSchema = new mongoose.Schema(
     TotalProfit: Number,
     StatusType: String,
   },
-  { timestamps: true }
+  { timestamps: true, collection: "ClientUnderClearance" }
 );
 
 export default mongoose.model("EmptyContainer", EmptyContainerSchema);
